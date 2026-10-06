@@ -1,0 +1,10 @@
+FdCloseInstrModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emission of WASI fd_close for IR.FdClose: one raw i32 operand, import #3 call, result extend. Hook from EmitMemInstr.
+    Provides
+        Item: FdCloseInstr(state, ins) -> state
+    DependsOn: EmitOperandRaw, Push, PushList, EmitU32LEB.
+    Composition: Native Include from modules/GenWasm/GenWasm.sir.
+    Notes: typeidx 2 of the minimal rt.

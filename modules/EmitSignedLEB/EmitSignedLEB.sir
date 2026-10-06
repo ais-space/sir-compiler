@@ -1,0 +1,124 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitSignedLEB (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitSignedLEB
+        Params: n
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.BitAnd
+                    Params: n, 127
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ShiftR
+                    Params: n, 7
+                    Returns: n
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.BitAnd
+                    Params: b, 64
+                    Returns: b40
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: n, 0
+                    Returns: n0
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: n, -1
+                    Returns: nNeg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: b40, 0
+                    Returns: b40z
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Ne
+                    Params: b40, 0
+                    Returns: b40nz
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: n0, b40z
+                    Returns: doneA
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: nNeg, b40nz
+                    Returns: doneB
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Or
+                    Params: doneA, doneB
+                    Returns: done
+                Branch
+                    Condition: done
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: out, b
+                            Returns: out
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: cont
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.BitOr
+                            Params: b, 128
+                            Returns: bhi
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: out, bhi
+                            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

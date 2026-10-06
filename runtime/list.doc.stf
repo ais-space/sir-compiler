@@ -1,0 +1,13 @@
+listModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Persistent chunked lists (64-element chunks).
+    Provides: sir_make_list(n) -> out Makes an empty list (capacity hint n).
+    Provides: sir_list_len(lst) -> out Element count.
+    Provides: sir_list_get(lst, idx) -> out Element by index (bounds-trapped).
+    Provides: sir_list_set(lst, idx, val) -> out Functional set (clone).
+    Provides: sir_list_push(lst, val) -> out Functional push (clone).
+    Provides: sir_list_concat(a, b) -> out Concatenation.
+    Provides: sir_list_append(lst, val) -> out Amortized append (may grow in place).
+    Provides: sir_list_pop(lst) -> out All but last (clone).

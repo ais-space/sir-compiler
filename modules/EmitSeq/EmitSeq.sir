@@ -1,0 +1,241 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitSeq (atomized module)
+
+    Include
+        Path: ../EmitInstruction/EmitInstruction.sir
+        Module: EmitInstruction
+
+    Include
+        Path: ../EmitBranch/EmitBranch.sir
+        Module: EmitBranch
+
+    Include
+        Path: ../EmitLoop/EmitLoop.sir
+        Module: EmitLoop
+
+    Include
+        Path: ../EmitTail/EmitTail.sir
+        Module: EmitTail
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitSeq
+        Params: nodes, tail, blocks, openIdx, counter
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: nodes
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cont
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cont
+            Body
+                Type: Body
+                Role: Content
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: nodes, i
+                    Returns: node
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: node, "name"
+                    Returns: kind
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: kind, "Instruction"
+                    Returns: isInstr
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: isInstr
+                    TrueBlock
+                        Type: TrueBlock
+                        Role: Content
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: EmitInstruction, node, blocks, openIdx
+                            Returns: blocks
+                    FalseBlock
+                        Type: FalseBlock
+                        Role: Content
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: kind, "Branch"
+                            Returns: isBranch
+                        Branch
+                            Type: Branch
+                            Role: Content
+                            Condition: isBranch
+                            TrueBlock
+                                Type: TrueBlock
+                                Role: Content
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: EmitBranch, node, blocks, openIdx, counter
+                                    Returns: res
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: res, "blocks"
+                                    Returns: blocks
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: res, "openIdx"
+                                    Returns: openIdx
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: res, "counter"
+                                    Returns: counter
+                            FalseBlock
+                                Type: FalseBlock
+                                Role: Content
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: kind, "Loop"
+                                    Returns: isLoop
+                                Branch
+                                    Type: Branch
+                                    Role: Content
+                                    Condition: isLoop
+                                    TrueBlock
+                                        Type: TrueBlock
+                                        Role: Content
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: EmitLoop, node, blocks, openIdx, counter
+                                            Returns: res
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: res, "blocks"
+                                            Returns: blocks
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: res, "openIdx"
+                                            Returns: openIdx
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: res, "counter"
+                                            Returns: counter
+                                    FalseBlock
+                                        Type: FalseBlock
+                                        Role: Content
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 0
+                                            Returns: skip
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: blocks, openIdx
+            Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitTail, open, tail, blocks, openIdx
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: res, "open"
+            Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: res, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: 
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: out, "blocks", blocks
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: out, "openIdx", openIdx
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: out, "counter", counter
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

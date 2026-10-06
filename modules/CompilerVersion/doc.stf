@@ -1,0 +1,6 @@
+CompilerVersionModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Compiler version stamp in code (0.2.2): the CompilerVersion function returns the version string; the string lands in the data section of the built binary (checked via strings). Updated by a separate commit on every version transition.
+    Provides: CompilerVersion() -> "0.2.2".

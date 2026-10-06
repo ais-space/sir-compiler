@@ -1,0 +1,8 @@
+GenWasmModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: WASM backend root — GenWasm(ir, rt) entry point. Assembles the final WASM module from IR and the parsed runtime: magic, type/import/function/export/code sections, invoking emission submodules.
+    Provides: GenWasm(ir, rt) -> res. ir — IR program; rt — parsed runtime (ParseWasm(data)); returns the ready WASM module byte list (deterministic: fixpoint b1==b0). Flag ir["trace"]=1 enables WASM tracing: 16-byte scratch reserve, id emission via fd_write fd=3, compact map JSON into Sys.Output (the driver writes .map and the file itself).    DependsOn: ParseWasm (rt parsing), Rep127 (code-section padding), EmitSection (sections), EmitU32LEB (indexes), Flatten (assembly), EmitName (names), EmitFuncBody (function bodies).
+    Composition: this is the aggregator; itself pulls in (Native Include) all 51 submodules (Path: ../<Name>/<Name>.sir). The entry point is called from Compiler.sir (wasm mode) or the test wrapper.
+    Notes: emission-pipeline orchestrator; all functions available via the root flat Include (modules do not include each other to avoid function duplicates at load).

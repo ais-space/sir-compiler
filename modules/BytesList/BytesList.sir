@@ -1,0 +1,217 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: BytesList - convert List<int> of bytes into a byte-string box
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ByteListToStr
+        Params: lst
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.IsList
+            Params: lst
+            Returns: isLst
+        Branch
+            Condition: isLst
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: lst
+                    Returns: nBox
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: nBox, 8
+                    Returns: nBox8
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: nBox8, 8
+                    Returns: n
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: n, 0
+                    Returns: isZeroRaw
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, isZeroRaw
+                    Returns: isZero
+                Branch
+                    Condition: isZero
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: ""
+                            Returns: out
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: alloc, n
+                            Returns: ptr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: iBox
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: iBox, nBox
+                            Returns: cont
+                        Loop
+                            Condition: cont
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: lst, iBox
+                                    Returns: bBox
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: bBox, 8
+                                    Returns: bBox8
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.Load
+                                    Params: bBox8, 8
+                                    Returns: bVal
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: iBox, 8
+                                    Returns: iBox8
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.Load
+                                    Params: iBox8, 8
+                                    Returns: iRaw
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: ptr, iRaw
+                                    Returns: addr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.Store
+                                    Params: addr, bVal, 1
+                                    Returns: w
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: iBox, 1
+                                    Returns: iBox
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: iBox, nBox
+                                    Returns: cont
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 8
+                            Returns: c8
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: alloc, c8
+                            Returns: st
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Store
+                            Params: st, n, 4
+                            Returns: w1
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: st, 4
+                            Returns: s4
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Store
+                            Params: s4, ptr, 4
+                            Returns: w2
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 16
+                            Returns: c16
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: alloc, c16
+                            Returns: val
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Store
+                            Params: val, 2, 4
+                            Returns: w3
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: val, 8
+                            Returns: v8
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Store
+                            Params: v8, st, 8
+                            Returns: w4
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: val
+                            Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: ""
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

@@ -1,0 +1,8 @@
+LowerArgsModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Expands an instruction Params string: SplitArgs(pstr) into tokens, classifies each via ClassifyArg, returning the argument-operand list.
+    Provides: LowerArgs(pstr) -> args.
+    DependsOn: SplitArgs, ClassifyArg.
+    Composition: Native include from modules/Compiler/Compiler.sir (Path: ../LowerArgs/LowerArgs.sir).

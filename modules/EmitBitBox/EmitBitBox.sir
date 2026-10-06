@@ -1,0 +1,89 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitBitBox (box raw i64 result: call sir_const_i64 + local.set dst)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitBitBox
+        Params: state, dst
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 16
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "hidx"
+            Returns: hxmap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: hxmap, "sir_const_i64"
+            Returns: hxidx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, hxidx
+            Returns: leb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: PushList, state, leb
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: dst, null
+            Returns: dnull
+        Branch
+            Condition: dnull
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "v2l"
+                    Returns: v2l
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: v2l, dst
+                    Returns: li
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 33
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, li
+                    Returns: leb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushList, state, leb
+                    Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

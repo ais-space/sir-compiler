@@ -1,0 +1,113 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitBlockGuard — guard condition computation for EmitBlock
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitBlockGuard
+        Params: state, bid
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "chains"
+            Returns: _ch
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: _ch, null
+            Returns: _noChains
+        Branch
+            Condition: _noChains
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "bm"
+                    Returns: _bm2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: _bm2, null
+                    Returns: _bmNull
+        Branch
+            Condition: _noChains
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "bm"
+                    Returns: _bm2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: _bm2, null
+                    Returns: _bmNull
+                Branch
+                    Condition: _bmNull
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Map
+                            Returns: _chains
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: ComputeChains, _bm2
+                            Returns: _chains
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: state, "chains", _chains
+                    Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: bid, null
+            Returns: bn
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "emitted"
+            Returns: em
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: InList, em, bid
+            Returns: inEm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: bn, inEm
+            Returns: skip
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "state", state, "skip", skip
+            Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

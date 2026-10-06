@@ -1,0 +1,188 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: IsCollectionOp (atomized module, Stage C collections)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: IsCollectionOp
+        Params: op
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.ListMake"
+            Returns: c0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.ListGet"
+            Returns: c1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.ListSet"
+            Returns: c2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.ListLen"
+            Returns: c3
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.ListPush"
+            Returns: c4
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.ListConcat"
+            Returns: c5
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.MapMake"
+            Returns: c6
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.MapGet"
+            Returns: c7
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.MapSet"
+            Returns: c8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.MapKeys"
+            Returns: c9
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.ListPushMut"
+            Returns: c10
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.ListSetMut"
+            Returns: c11
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.MapSetMut"
+            Returns: c12
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.StrJoinParts"
+            Returns: c13
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: c0, c1
+            Returns: o1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o1, c2
+            Returns: o2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o2, c3
+            Returns: o3
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o3, c4
+            Returns: o4
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o4, c5
+            Returns: o5
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o5, c6
+            Returns: o6
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o6, c7
+            Returns: o7
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o7, c8
+            Returns: o8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o8, c9
+            Returns: o9
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o9, c10
+            Returns: o10
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o10, c11
+            Returns: o11
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o11, c12
+            Returns: o12
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: o12, c13
+            Returns: o13
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: o13
+            Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

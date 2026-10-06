@@ -1,0 +1,62 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitMemInstr (dispatcher)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitMemInstr
+        Params: state, ins
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ins, "op"
+            Returns: op
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: PathOpenInstr, state, ins
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: FdCloseInstr, state, ins
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitWasmMemCore, state, ins
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitWasiFileInstr, state, ins
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitRawIntInstr, state, ins
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitFloatInstr, state, ins
+            Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

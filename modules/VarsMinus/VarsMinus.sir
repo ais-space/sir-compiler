@@ -1,0 +1,81 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: VarsMinus (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: VarsMinus
+        Params: vars, params
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: vars
+            Returns: L
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, L
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: vars, i
+                    Returns: v
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: InList, params, v
+                    Returns: inp
+                Branch
+                    Condition: inp
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: out, v
+                            Returns: out
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, L
+                    Returns: cont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

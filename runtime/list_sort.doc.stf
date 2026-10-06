@@ -1,0 +1,6 @@
+list_sortModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: List sort.
+    Provides: sir_sort(lst) -> out Sorted copy (stable).

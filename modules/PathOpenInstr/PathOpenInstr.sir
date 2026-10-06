@@ -1,0 +1,194 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: PathOpenInstr (atomized module, Stage D filesystem)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: PathOpenInstr
+        Params: state, ins
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ins, "op"
+            Returns: op
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "IR.PathOpen"
+            Returns: cOp
+        Branch
+            Condition: cOp
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 2
+                    Returns: fdCi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: ins, "args"
+                    Returns: args
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: ins, "dst"
+                    Returns: dst
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "v2l"
+                    Returns: v2l
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 0
+                    Returns: fdI
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: args
+                    Returns: fdN
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: fdI, fdN
+                    Returns: fdC
+                Loop
+                    Condition: fdC
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: args, fdI
+                            Returns: fdArg
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: EmitOperandRaw, state, fdArg
+                            Returns: state
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: fdI, 5
+                            Returns: fdIs5
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: fdI, 6
+                            Returns: fdIs6
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Or
+                            Params: fdIs5, fdIs6
+                            Returns: fdHi
+                        Branch
+                            Condition: fdHi
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Push, state, 167
+                                    Returns: state
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Add
+                            Params: fdI, 1
+                            Returns: fdI
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: fdI, fdN
+                            Returns: fdC
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 16
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, fdCi
+                    Returns: fdLeb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushList, state, fdLeb
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 173
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: dst, null
+                    Returns: fdDnull
+                Branch
+                    Condition: fdDnull
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: v2l, dst
+                            Returns: fdLi
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: Push, state, 33
+                            Returns: state
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: EmitU32LEB, fdLi
+                            Returns: fdDLeb
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: PushList, state, fdDLeb
+                            Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: state, "done", 1
+                    Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

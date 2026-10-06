@@ -1,0 +1,9 @@
+SliceModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Extracts a byte sublist [pos : pos+n] from a list. Low-level WASM parsing primitive.
+    Provides: Slice(data, pos, n) -> out. data — byte list; pos, n — Int; returns a sublist of length n.
+    DependsOn: none (leaf; Core.ListGet/ListPush/Sub/Ge, Loop).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../Slice/Slice.sir).
+    Notes: used by ParseWasm to extract each section body.

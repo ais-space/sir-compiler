@@ -1,0 +1,149 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: IsTargetNeutral (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: IsTargetNeutral
+        Params: ir
+        Returns: ok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ir, "functions"
+            Returns: funcs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: funcs
+            Returns: ft
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: ft, "list"
+            Returns: funcsOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ir, "entry"
+            Returns: entry
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: entry
+            Returns: et
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: et, "str"
+            Returns: entryOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ir, "types"
+            Returns: types
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: types
+            Returns: tt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: tt, "list"
+            Returns: typesOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: funcs
+            Returns: fl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: fi
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: acc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: fi, fl
+            Returns: fc
+        Loop
+            Condition: fc
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: funcs, fi
+                    Returns: f
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: ValidateFunc, f
+                    Returns: fok
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: acc, fok
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: fi, 1
+                    Returns: fi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: fi, fl
+                    Returns: fc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: funcsOk, entryOk
+            Returns: s1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: s1, typesOk
+            Returns: s2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: s2, acc
+            Returns: ok
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ok

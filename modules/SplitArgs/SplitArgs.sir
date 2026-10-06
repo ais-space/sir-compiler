@@ -1,0 +1,68 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SplitArgs (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: SplitArgs
+        Params: pstr
+        Returns: parts
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: pstr
+            Returns: pt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: pt, "null"
+            Returns: isNull
+        Branch
+            Condition: isNull
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Returns: parts
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: pstr, ""
+                    Returns: isEmpty
+                Branch
+                    Condition: isEmpty
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.List
+                            Returns: parts
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Chr
+                            Params: 44
+                            Returns: comma
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.StrSplit
+                            Params: pstr, comma
+                            Returns: parts
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: parts

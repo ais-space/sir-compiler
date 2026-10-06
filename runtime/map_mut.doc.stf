@@ -1,0 +1,7 @@
+map_mutModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: In-place map mutation.
+    Provides: sir_map_set_inplace(m, key, val) -> out Upsert in place (growth path).
+    Provides: sir_map_set_mut(m, key, val) -> out Upsert in place.

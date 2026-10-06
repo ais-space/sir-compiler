@@ -1,0 +1,81 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: InList (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: InList
+        Params: lst, val
+        Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: false
+            Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: lst
+            Returns: L
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, L
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: lst, i
+                    Returns: cur
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: cur, val
+                    Returns: eq
+                Branch
+                    Condition: eq
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: true
+                            Returns: found
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, L
+                    Returns: cont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: found

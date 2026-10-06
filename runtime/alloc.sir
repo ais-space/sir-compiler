@@ -1,0 +1,250 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR runtime - bump allocator over the heap cursor global (Foundation 2)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: alloc
+        Params: size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalGet
+            Params: 0
+            Returns: cur
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: size, 7
+            Returns: tmp1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: -8
+            Returns: mask
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAnd
+            Params: tmp1, mask
+            Returns: aligned
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: cur, aligned
+            Returns: nxt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: cur, 16
+            Returns: boxEnd
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WSub
+            Params: boxEnd, nxt
+            Returns: over
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WGtU
+            Params: boxEnd, nxt
+            Returns: isOver
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: over, isOver
+            Returns: extra
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: nxt, extra
+            Returns: needEnd
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.MemSize
+            Returns: curPages
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 65536
+            Returns: pageSize
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: curPages, pageSize
+            Returns: curBytes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WGtU
+            Params: needEnd, curBytes
+            Returns: needGrowRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WSub
+            Params: needEnd, curBytes
+            Returns: needBytes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: needBytes, 65535
+            Returns: tmp2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WDivU
+            Params: tmp2, 65536
+            Returns: pagesRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: pagesRaw, needGrowRaw
+            Returns: pages
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.MemGrow
+            Params: pages
+            Returns: old
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: old, -1
+            Returns: failedRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 1024
+            Returns: fallbackPages
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: fallbackPages, failedRaw
+            Returns: fbp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.MemGrow
+            Params: fbp
+            Returns: old2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: old2, -1
+            Returns: failed2Raw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAnd
+            Params: failedRaw, failed2Raw
+            Returns: failAll
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalGet
+            Params: 0
+            Returns: bc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 16
+            Returns: c16b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: bc, c16b
+            Returns: bnb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalSet
+            Params: 0, bnb
+            Returns: bw0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 1
+            Returns: btag
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: bc, btag, 4
+            Returns: bw1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: bc, 8
+            Returns: bc8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: bc8, failAll, 8
+            Returns: bw2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: bc
+            Returns: fbad
+        Branch
+            Condition: fbad
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Trap
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: cur
+                    Returns: cur
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalSet
+            Params: 0, nxt
+            Returns: w
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: cur
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

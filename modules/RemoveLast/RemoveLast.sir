@@ -1,0 +1,76 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: RemoveLast (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: RemoveLast
+        Params: lst
+        Returns: r
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: lst
+            Returns: L
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sub
+            Params: L, 1
+            Returns: Lm1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: t
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: t, Lm1
+            Returns: tCont
+        Loop
+            Condition: tCont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: lst, t
+                    Returns: item
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, item
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: t, 1
+                    Returns: t
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: t, Lm1
+                    Returns: tCont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc

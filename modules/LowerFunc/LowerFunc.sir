@@ -1,0 +1,328 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: LowerFunc (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: LowerFunc
+        Params: funcNode
+        Returns: funcIR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: funcNode, "props"
+            Returns: props
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: props, "Name"
+            Returns: name
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: props, "Params"
+            Returns: pstr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: SplitArgs, pstr
+            Returns: plist
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: plist
+            Returns: plen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: params
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: pi
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: pi, plen
+            Returns: pic
+        Loop
+            Condition: pic
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: plist, pi
+                    Returns: p
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrTrim
+                    Params: p
+                    Returns: pt
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: params, pt
+                    Returns: params
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: pi, 1
+                    Returns: pi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: pi, plen
+                    Returns: pic
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: funcNode, "children"
+            Returns: children
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: children
+            Returns: clen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: bodyNodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: ""
+            Returns: retVar
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: bi
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: bi, clen
+            Returns: bic
+        Loop
+            Condition: bic
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: children, bi
+                    Returns: ch
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: ch, "name"
+                    Returns: cn
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: cn, "Result"
+                    Returns: isRes
+                Branch
+                    Condition: isRes
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: ch, "props"
+                            Returns: crp
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: crp, "Returns"
+                            Returns: retVar
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: bodyNodes, ch
+                            Returns: bodyNodes
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: bi, 1
+                    Returns: bi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: bi, clen
+                    Returns: bic
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.NumToStr
+            Params: counter
+            Returns: cv
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: "b", cv
+            Returns: entryId
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: counter, 1
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: entryBlock
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: entryBlock, "id", entryId
+            Returns: entryBlock
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: eInstrs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: entryBlock, "instrs", eInstrs
+            Returns: entryBlock
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: eTerm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: entryBlock, "term", eTerm
+            Returns: entryBlock
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: blocks, entryBlock
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: openIdx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: tail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: tail, "kind", "return"
+            Returns: tail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: tail, "var", retVar
+            Returns: tail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSeq, bodyNodes, tail, blocks, openIdx, counter
+            Returns: r
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: r, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: r, "counter"
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: funcIR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: funcIR, "name", name
+            Returns: funcIR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: funcIR, "params", params
+            Returns: funcIR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: funcIR, "blocks", blocks
+            Returns: funcIR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: funcIR, "entry", entryId
+            Returns: funcIR
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: funcIR

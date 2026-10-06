@@ -1,0 +1,408 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR runtime - traced-alloc debug family
+
+    Function
+        Type: Function
+        Role: Content
+        Name: alloc_traced
+        Params: site, size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalGet
+            Params: 1
+            Returns: tbase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: tbase, 0
+            Returns: tneedRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, tneedRaw
+            Returns: tneed
+        Branch
+            Condition: tneed
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 2048
+                    Returns: ttablesz
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: alloc, ttablesz
+                    Returns: tnewbase
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.GlobalSet
+                    Params: 1, tnewbase
+                    Returns: tset
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_i64, tnewbase
+                    Returns: tbasebox
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_num_to_str, tbasebox
+                    Returns: tbasestr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "TRACE_TABLE "
+                    Returns: ttag
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_str_concat, ttag, tbasestr
+                    Returns: tmsg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_log, tmsg
+                    Returns: tlogged
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: tnewbase
+                    Returns: tbase
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: tbase
+                    Returns: tbase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 16
+            Returns: tstride
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: site, tstride
+            Returns: toff
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalGet
+            Params: 2
+            Returns: tattr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 256
+            Returns: tplane
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: tattr, tplane
+            Returns: tpoff
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: tbase, toff
+            Returns: tentryBase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: tentryBase, tpoff
+            Returns: tentry
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: tentry, 8
+            Returns: tcount
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 1
+            Returns: tone
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: tcount, tone
+            Returns: tcount2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: tentry, tcount2, 8
+            Returns: twc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: tentry, 8
+            Returns: tentry8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: tentry8, 8
+            Returns: tbytes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: tbytes, size
+            Returns: tbytes2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: tentry8, tbytes2, 8
+            Returns: twb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc, size
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: map_traced_alloc
+        Params: size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 1
+            Returns: tsite
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc_traced, tsite, size
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: str_traced_alloc
+        Params: size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 2
+            Returns: tsite
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc_traced, tsite, size
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: list_traced_alloc
+        Params: size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 3
+            Returns: tsite
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc_traced, tsite, size
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: const_traced_alloc
+        Params: size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 4
+            Returns: tsite
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc_traced, tsite, size
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: io_traced_alloc
+        Params: size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 5
+            Returns: tsite
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc_traced, tsite, size
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: io_read_traced_alloc
+        Params: size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 7
+            Returns: tsite
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc_traced, tsite, size
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: io_print_traced_alloc
+        Params: size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 8
+            Returns: tsite
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc_traced, tsite, size
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: extra_traced_alloc
+        Params: size
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 6
+            Returns: tsite
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc_traced, tsite, size
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

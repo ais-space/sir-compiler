@@ -1,0 +1,8 @@
+ValidateBlockModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Validates a single IR block: checks presence and types of id/instrs/term and runs each instruction through ValidateInstr. Returns 1 on success, 0 on violation.
+    Provides: ValidateBlock(block) -> ok.
+    DependsOn: ValidateInstr, ValidateTerm.
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../ValidateBlock/ValidateBlock.sir).

@@ -1,0 +1,149 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ValidateFunc (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ValidateFunc
+        Params: func
+        Returns: ok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: func, "name"
+            Returns: name
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: name
+            Returns: nt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: nt, "str"
+            Returns: nameOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: func, "params"
+            Returns: params
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: params
+            Returns: pt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: pt, "list"
+            Returns: paramsOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: func, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: blocks
+            Returns: bt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: bt, "list"
+            Returns: blocksOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: blocks
+            Returns: bl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: bi
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: acc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: bi, bl
+            Returns: bc
+        Loop
+            Condition: bc
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: blocks, bi
+                    Returns: bk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: ValidateBlock, bk
+                    Returns: bok
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: acc, bok
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: bi, 1
+                    Returns: bi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: bi, bl
+                    Returns: bc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: nameOk, paramsOk
+            Returns: s1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: s1, blocksOk
+            Returns: s2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: s2, acc
+            Returns: ok
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ok

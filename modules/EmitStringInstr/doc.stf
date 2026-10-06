@@ -1,0 +1,9 @@
+EmitStringInstrModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits WASM-backend string IR instructions: IR.Const (string — load of the [offset, len] pair from the data section via strMap plus list assembly by the runtime helper; number — i64.const + sir_const_i64 helper), IR.Output (value print), IR.Input (string read into dst), IR.StrSub (substring, sir_str_sub helper, hidx=25). Atomized from EmitInstr.sir.
+    Provides: EmitStringInstr(state, ins) -> state. Handles IR.Const/IR.Output/IR.Input/IR.StrSub and ALWAYS writes state["done"]: 1 — instruction handled here, 0 — not handled (EmitInstr continues it).
+    DependsOn: Push, PushList (bytes), EmitU32LEB/EmitSignedLEB (constant and index encoding), EmitOperand (operands); reads state["v2l"], state["strMap"], writes state["done"].
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitStringInstr/EmitStringInstr.sir); called from EmitInstr as the first instruction.
+    Notes: Verbatim move of the IR.Const/IR.Output/IR.Input/IR.StrSub branches from EmitInstr.sir; deterministic (fixpoint b1==b0) covered by the release test set.

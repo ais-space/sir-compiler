@@ -1,0 +1,8 @@
+ApplyPropsModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Assigns properties to nodes from prop-records.
+    Provides: ApplyProps(nodes, records) -> nodes.
+    DependsOn: none
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../ApplyProps/ApplyProps.sir).

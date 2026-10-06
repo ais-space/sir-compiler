@@ -1,0 +1,9 @@
+EmitInstrsModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits a block instruction list, calling EmitInstr for each.
+    Provides: EmitInstrs(state, instrs) -> state. instrs — IR instruction list; returns state with appended bytes.
+    DependsOn: EmitInstr.
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitInstrs/EmitInstrs.sir).
+    Notes: plain iterator; all encoding logic lives in EmitInstr.

@@ -1,0 +1,82 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitCallArgs (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitCallArgs
+        Params: state, args, fromIdx
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: fromIdx
+            Returns: which
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.IsList
+            Params: args
+            Returns: isList
+        Branch
+            Condition: isList
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: args
+                    Returns: L
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: which, L
+                    Returns: cont
+                Loop
+                    Condition: cont
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: args, which
+                            Returns: a
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: EmitOperand, state, a
+                            Returns: state
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Add
+                            Params: which, 1
+                            Returns: which
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: which, L
+                            Returns: cont
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 0
+                    Returns: dummy
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

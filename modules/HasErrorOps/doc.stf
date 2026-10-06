@@ -1,0 +1,10 @@
+HasErrorOpsModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Function prescan for error-aware operations — direct IR.Div/IR.Mod instructions (user Core.Div/Core.Mod lower into binary ops), IR.Call to helpers whose result may be an ERROR box (sir_div/sir_mod), and the IR.ReadFile instruction (Stage D). Controls function err-block wrapping, slot allocation, and tag-check insertion.
+    Provides
+        Item: HasErrorOps(func) -> 0/1
+    DependsOn: none (Core.* only).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir; called from EmitFuncBody.
+    Notes: Stage D; direct IR.Div/IR.Mod added in D5 (defect: binary ops were not recognized as error-aware, propagation after Core.Div never fired). Extension of the error-aware operation set (memory bounds, host-I/O) — here and in EmitInstr.

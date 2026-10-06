@@ -1,0 +1,103 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: WasiMain - self-host compile path for the "wasi" first-line mode
+
+    Function
+        Type: Function
+        Role: Content
+        Name: WasiMain
+        Params: src
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Parse, src
+            Returns: ast
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: "STAGE parse done"
+            Returns: lgParse
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_log, lgParse
+            Returns: lgParseW
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Lower, ast
+            Returns: ir
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: "STAGE lower done"
+            Returns: lgLower
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_log, lgLower
+            Returns: lgLowerW
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: "runtime.wasm"
+            Returns: rtpath
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Sys.Storage.Read
+            Params: rtpath
+            Returns: rt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: GenWasm, ir, rt
+            Returns: bytes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: "STAGE emit done"
+            Returns: lgEmit
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_log, lgEmit
+            Returns: lgEmitW
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: bytes
+            Returns: nbytes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: ByteListToStr, bytes
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Sys.Output
+            Params: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

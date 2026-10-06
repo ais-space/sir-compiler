@@ -1,0 +1,2190 @@
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR Standard Library - Collections
+
+    Function
+        Name: Map
+        Params: fn, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: fn, x
+                    Returns: y
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, y
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Filter
+        Params: pred, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: pred, x
+                    Returns: keep
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: keep
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: acc, x
+                            Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Fold
+        Params: fn, acc, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: fn, acc, x
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: ForEach
+        Params: fn, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: fn, x
+                    Returns: _
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: null
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Reverse
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Sub
+                    Params: n, i
+                    Returns: tmp
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Sub
+                    Params: tmp, 1
+                    Returns: idx
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, idx
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, x
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Zip
+        Params: a, b
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: a
+            Returns: na
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: b
+            Returns: nb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: na, nb
+            Returns: aShorter
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: aShorter
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: na
+                    Returns: n
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: nb
+                    Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: a, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: b, i
+                    Returns: y
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: x, y
+                    Returns: pair
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, pair
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Range
+        Params: start, end
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Range
+            Params: start, end
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Take
+        Params: list, k
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: k, n
+            Returns: kLess
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: kLess
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: k
+                    Returns: m
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: n
+                    Returns: m
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, m
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, x
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, m
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Drop
+        Params: list, k
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: k, n
+            Returns: kLess
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: kLess
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: k
+                    Returns: start
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: n
+                    Returns: start
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: start
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, x
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Head
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: list, 0
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Tail
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: one
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Drop, list, one
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Last
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: one
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sub
+            Params: n, one
+            Returns: idx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: list, idx
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Nth
+        Params: list, i
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: list, i
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Init
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: one
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sub
+            Params: n, one
+            Returns: m
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Take, list, m
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Contains
+        Params: list, v
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.False
+            Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: a
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: found
+            Returns: b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: a, b
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: x, v
+                    Returns: eq
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: eq
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.True
+                            Returns: found
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: a
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Not
+                    Params: found
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: a, b
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: found
+
+    Function
+        Name: Count
+        Params: list, v
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: c
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: x, v
+                    Returns: eq
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: eq
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Add
+                            Params: c, 1
+                            Returns: c
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: c
+
+    Function
+        Name: IndexOf
+        Params: list, v
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: -1
+            Returns: idx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: a
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: found
+            Returns: b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: a, b
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: x, v
+                    Returns: eq
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: eq
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: i
+                            Returns: idx
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.True
+                            Returns: found
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: a
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Not
+                    Params: found
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: a, b
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: idx
+
+    Function
+        Name: Any
+        Params: pred, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.False
+            Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: a
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: found
+            Returns: b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: a, b
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: pred, x
+                    Returns: ok
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: ok
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.True
+                            Returns: found
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: a
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Not
+                    Params: found
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: a, b
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: found
+
+    Function
+        Name: All
+        Params: pred, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.True
+            Returns: all
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: a
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: all, a
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: pred, x
+                    Returns: ok
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: ok
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.True
+                            Returns: keep
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: ok
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.False
+                            Returns: all
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: a
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: all, a
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: all
+
+    Function
+        Name: Find
+        Params: pred, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.False
+            Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: a
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: found
+            Returns: b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: a, b
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: pred, x
+                    Returns: ok
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: ok
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: x
+                            Returns: out
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.True
+                            Returns: found
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: a
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Not
+                    Params: found
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: a, b
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Concat
+        Params: a, b
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: a
+            Returns: na
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: b
+            Returns: nb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, na
+            Returns: condA
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: condA
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: a, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, x
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, na
+                    Returns: condA
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: j
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: j, nb
+            Returns: condB
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: condB
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: b, j
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, x
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: j, 1
+                    Returns: j
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: j, nb
+                    Returns: condB
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Flatten
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.IsList
+                    Params: x
+                    Returns: isL
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: isL
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListLen
+                            Params: x
+                            Returns: m
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: k
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: k, m
+                            Returns: cond2
+                        Loop
+                            Type: Loop
+                            Role: Content
+                            Condition: cond2
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: x, k
+                                    Returns: y
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListPush
+                                    Params: acc, y
+                                    Returns: acc
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: k, 1
+                                    Returns: k
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: k, m
+                                    Returns: cond2
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: acc, x
+                            Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Distinct
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Contains, acc, x
+                    Returns: has
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: has
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: acc, x
+                            Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Enumerate
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: i, x
+                    Returns: pair
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, pair
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Partition
+        Params: pred, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: trues
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: falses
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: pred, x
+                    Returns: ok
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: ok
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: trues, x
+                            Returns: trues
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: falses, x
+                            Returns: falses
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: trues, falses
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: GroupBy
+        Params: keyFn, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: result
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: keyFn, x
+                    Returns: key
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: result, key
+                    Returns: existing
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.IsNull
+                    Params: existing
+                    Returns: isNew
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: isNew
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.List
+                            Params: x
+                            Returns: newl
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: existing, x
+                            Returns: newl
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: result, key, newl
+                    Returns: result
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: result
+
+    Function
+        Name: FlatMap
+        Params: fn, list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: fn, x
+                    Returns: y
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.IsList
+                    Params: y
+                    Returns: isL
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: isL
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListLen
+                            Params: y
+                            Returns: m
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: k
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: k, m
+                            Returns: cond2
+                        Loop
+                            Type: Loop
+                            Role: Content
+                            Condition: cond2
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: y, k
+                                    Returns: z
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListPush
+                                    Params: acc, z
+                                    Returns: acc
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: k, 1
+                                    Returns: k
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: k, m
+                                    Returns: cond2
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: acc, y
+                            Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Sort
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, x
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: condI
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: condI
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: i
+                    Returns: m
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: k
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: k, n
+                    Returns: condK
+                Loop
+                    Type: Loop
+                    Role: Content
+                    Condition: condK
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: acc, k
+                            Returns: xk
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: acc, m
+                            Returns: xm
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Gt
+                            Params: xm, xk
+                            Returns: xmGreater
+                        Branch
+                            Type: Branch
+                            Role: Content
+                            Condition: xmGreater
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: k
+                                    Returns: m
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Add
+                            Params: k, 1
+                            Returns: k
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: k, n
+                            Returns: condK
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: acc, i
+                    Returns: xi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: acc, m
+                    Returns: xm2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListSet
+                    Params: acc, i, xm2
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListSet
+                    Params: acc, m, xi
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: condI
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc

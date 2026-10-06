@@ -1,0 +1,9 @@
+BuildBlockMapModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Builds a block-id to block map and an ordered list of block ids (sequence order) by recursive traversal of the blocks list.
+    Provides: BuildBlockMap(blocks, i, m, order) -> res. blocks — IR block list; i — index (0 to start); m — accumulated id-to-block map; order — accumulated id list; returns map {"m":m,"o":order}.
+    DependsOn: BuildBlockMap recursion (leaf; Core.MapSet/ListPush/Add).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../BuildBlockMap/BuildBlockMap.sir).
+    Notes: tail recursion over the index; the result feeds state["bm"]/state["order"] at emission.

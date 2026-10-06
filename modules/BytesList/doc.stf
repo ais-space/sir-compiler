@@ -1,0 +1,9 @@
+BytesListModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Converts List<int> (bytes) into a byte-string box for compiled WASM output. Used on the compiler wasi-branch: GenWasm returns a byte list, while Node/WASI expects stdout bytes as a string.
+    Provides: ByteListToStr(lst) -> str (string box). For each byte calls sir_chr (extracts the value payload, not the pointer) and grows the accumulator via sir_str_concat.
+    DependsOn: sir_list_len, sir_list_get, sir_chr (fixed), sir_str_concat, alloc, sir_const_str (Foundation 2 runtime).
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../BytesList/BytesList.sir). Functions merge into the shared compiler namespace.
+    Notes: the empty accumulator is built as sir_const_str(buf, 0) with a raw zero size (sir_const_str takes the length as raw i64).

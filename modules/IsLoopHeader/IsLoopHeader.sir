@@ -1,0 +1,81 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: IsLoopHeader (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: IsLoopHeader
+        Params: state, b
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "loop", 0, "body", null, "exit", null
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: b, "term"
+            Returns: term
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "op"
+            Returns: op
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Branch"
+            Returns: isB
+        Branch
+            Condition: isB
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: term, "true"
+                    Returns: tid
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: term, "false"
+                    Returns: fid
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: term, "loop"
+                    Returns: flagged
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: flagged, 1
+                    Returns: isFlagged
+                Branch
+                    Condition: isFlagged
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Map
+                            Params: "loop", 1, "body", tid, "exit", fid
+                            Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

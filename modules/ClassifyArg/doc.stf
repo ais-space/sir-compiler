@@ -1,0 +1,8 @@
+ClassifyArgModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Classifies a single parser argument token into a SIR operand: determines kind (ref/const/null/global) and val (name, number, string, or bool), expanding nested brackets/quotes. Returns map {kind, val}.
+    Provides: ClassifyArg(token) -> operand.
+    DependsOn: none (leaf in module dependencies)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../ClassifyArg/ClassifyArg.sir).

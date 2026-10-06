@@ -1,0 +1,6 @@
+EmitWasiFileInstrModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits file WASI operations: IR.FdWrite/IR.FdRead.
+    Provides: EmitWasiFileInstr(state, ins) -> state.

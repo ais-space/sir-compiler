@@ -1,0 +1,8 @@
+HasForbiddenModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Target-independence predicate: returns 1 if the op string contains target-specific tokens (i32/i64/f32/f64/wasm/register/stack), else 0. Signals wasm-specific leakage into IR.
+    Provides: HasForbidden(op) -> bad.
+    DependsOn: none (leaf in module dependencies)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../HasForbidden/HasForbidden.sir).

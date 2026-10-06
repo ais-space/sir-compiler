@@ -1,0 +1,56 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitInstruction (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitInstruction
+        Params: node, blocks, openIdx
+        Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: blocks, openIdx
+            Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: LowerInstr, node
+            Returns: li
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: open, "instrs"
+            Returns: instrs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: instrs, li
+            Returns: instrs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: open, "instrs", instrs
+            Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListSet
+            Params: blocks, openIdx, open
+            Returns: blocks
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: blocks

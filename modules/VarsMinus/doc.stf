@@ -1,0 +1,9 @@
+VarsMinusModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Set difference of variable lists (vars without params) — names of locals that are not parameters.
+    Provides: VarsMinus(vars, params) -> out. vars/params — name lists; returns vars minus params (no duplicates).
+    DependsOn: InList.
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../VarsMinus/VarsMinus.sir).
+    Notes: result length = function local count (passed to EmitFuncBody for local declarations).

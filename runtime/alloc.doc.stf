@@ -1,0 +1,6 @@
+allocModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Bump allocator over the heap cursor global.
+    Provides: alloc(size) -> out Allocates size bytes (8-aligned) from the heap cursor.

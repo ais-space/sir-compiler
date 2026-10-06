@@ -1,0 +1,8 @@
+PromoteStrConstsModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: String-literal promotion: turns string constants into IR.Const(string) with ref-use registration ahead of local allocation (CollectVars/BuildVarMap), so temporary locals land in the variable map.
+    Provides: PromoteStrConsts(f) -> f. f is an IR function; returns the function with promoted string literals.
+    DependsOn: called from GenWasm before emission of function bodies (native include from modules/GenWasm/GenWasm.sir, Path: ../PromoteStrConsts/PromoteStrConsts.sir).
+    Notes: removes the dependence on deferred string handling in code generation; guarantees all string constants are accounted for by CollectStr/CollectVars. IR.Trace and IR.TraceVal are not promoted (the path is read by emission directly from const — otherwise striped bytes and the map drift; R4/R6.3).

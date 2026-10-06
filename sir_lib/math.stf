@@ -1,0 +1,469 @@
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR Standard Library - Math
+
+    Function
+        Name: Gcd
+        Params: a, b
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Ne
+            Params: b, 0
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Mod
+                    Params: a, b
+                    Returns: r
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: b
+                    Returns: t
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: r
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: t
+                    Returns: a
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Ne
+                    Params: b, 0
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: a
+
+    Function
+        Name: Lcm
+        Params: a, b
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Gcd, a, b
+            Returns: g
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Mul
+            Params: a, b
+            Returns: prod
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.IntDiv
+            Params: prod, g
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Factorial
+        Params: n
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: acc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Le
+            Params: i, n
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Mul
+                    Params: acc, i
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Le
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: IsPrime
+        Params: n
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: n, 2
+            Returns: small
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: small
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.False
+                    Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 2
+            Returns: d
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sqrt
+            Params: n
+            Returns: srn
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Floor
+            Params: srn
+            Returns: limit
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Le
+            Params: d, limit
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.True
+            Returns: prime
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Mod
+                    Params: n, d
+                    Returns: r
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: r, 0
+                    Returns: divisible
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Condition: divisible
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.False
+                            Returns: prime
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: d, 1
+                    Returns: d
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Le
+                    Params: d, limit
+                    Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: prime
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Even
+        Params: n
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Mod
+            Params: n, 2
+            Returns: r
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: r, 0
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Odd
+        Params: n
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Even, n
+            Returns: e
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: e
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: DivMod
+        Params: a, b
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.IntDiv
+            Params: a, b
+            Returns: q
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Mod
+            Params: a, b
+            Returns: r
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: q, r
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Mean
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: acc, x
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Div
+            Params: acc, n
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Median
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Sort, list
+            Returns: sorted
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: sorted
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 2
+            Returns: two
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Mod
+            Params: n, two
+            Returns: rem
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: rem, 0
+            Returns: even
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: even
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.IntDiv
+                    Params: n, two
+                    Returns: mid
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Sub
+                    Params: mid, 1
+                    Returns: mid1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: sorted, mid
+                    Returns: a
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: sorted, mid1
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: a, b
+                    Returns: sum
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Div
+                    Params: sum, two
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.IntDiv
+                    Params: n, two
+                    Returns: mid
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: sorted, mid
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

@@ -1,0 +1,9 @@
+WasiMainModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: WASI branch of compiler self-hosting. When the first stdin line == "wasi", the dispatcher (Compiler.sir main) passes the remaining buffer here. WasiMain compiles the given SIR source to WASM end-to-end: Parse -> Lower -> Sys.Storage.Read "runtime.wasm" -> GenWasm(ir, rt) -> ByteListToStr -> Sys.Output.
+    Provides: WasiMain(src) -> str (byte string of finished WASM). Returns the string and prints it via Sys.Output (Node/WASI writes bytes to stdout).
+    DependsOn: Parse, Lower, GenWasm (compiler modules), ByteListToStr (BytesList), Sys.Storage.Read, Sys.Output.
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../WasiMain/WasiMain.sir). Functions merge into the shared compiler namespace.
+    Notes: rt is read as a string box of bytes (GenWasm consumes rt as a string, §7.6c). Relative "runtime.wasm": node resolves against runner cwd (cwd=rtdir), wasmtime/wazero — against preopen-dirfd; absolute path is dead on both (errno 63, WtRights 2026-09-28) — relative only. The test preopens the directory with runtime.wasm and sets cwd.

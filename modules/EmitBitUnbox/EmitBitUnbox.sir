@@ -1,0 +1,68 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitBitUnbox (boxed bit-op operand unboxing: box -> raw i64 payload)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitBitUnbox
+        Params: state
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 66
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSignedLEB, 8
+            Returns: leb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: PushList, state, leb
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 124
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 167
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 41
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 3
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 0
+            Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

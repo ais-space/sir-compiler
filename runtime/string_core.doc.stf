@@ -1,0 +1,15 @@
+string_coreModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Core string access over data-section literals.
+    Provides: sir_const_str(ptr, ln) -> out String view over guest memory.
+    Provides: sir_str_len(s) -> out Length.
+    Provides: sir_str_concat(a, b) -> out Concatenation.
+    Provides: sir_str_sub(s, start, len) -> out Substring.
+    Provides: sir_str_idx(s, ch) -> out First index of char.
+    Provides: sir_str_join_parts(parts) -> out Joins a string list.
+    Provides: sir_str_trim(s) -> out Trims whitespace.
+    Provides: sir_str_split(s, delim) -> out Splits on delimiter.
+    Provides: sir_str_lt(a, b) -> out Lexicographic less-than.
+    Provides: sir_split_first_line(src) -> out Head line.

@@ -1,0 +1,463 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR self-hosting compiler - entry / dispatcher
+    Capabilities: Sys.Input, Sys.Output, Sys.Storage
+    Include
+        Path: ../CompilerVersion/CompilerVersion.sir
+        Module: CompilerVersion
+    Include
+        Path: ../SirGate/SirGate.sir
+        Module: SirGate
+    Include
+        Path: ../ClassifyArg/ClassifyArg.sir
+        Module: ClassifyArg
+    Include
+        Path: ../EmitSeq/EmitSeq.sir
+        Module: EmitSeq
+    Include
+        Type: Include
+        Role: Content
+        Path: ../EmitChild/EmitChild.sir
+        Module: EmitChild
+    Include
+        Path: ../FindChild/FindChild.sir
+        Module: FindChild
+    Include
+        Path: ../HasForbidden/HasForbidden.sir
+        Module: HasForbidden
+    Include
+        Path: ../IsTargetNeutral/IsTargetNeutral.sir
+        Module: IsTargetNeutral
+    Include
+        Path: ../Lower/Lower.sir
+        Module: Lower
+    Include
+        Path: ../LowerArgs/LowerArgs.sir
+        Module: LowerArgs
+    Include
+        Path: ../LowerFunc/LowerFunc.sir
+        Module: LowerFunc
+    Include
+        Path: ../LowerInstr/LowerInstr.sir
+        Module: LowerInstr
+    Include
+        Path: ../LowerMem/LowerMem.sir
+        Module: LowerMem
+    Include
+        Path: ../MapOp/MapOp.sir
+        Module: MapOp
+    Include
+        Path: ../NewOpen/NewOpen.sir
+        Module: NewOpen
+    Include
+        Path: ../Parse/Parse.sir
+        Module: Parse
+    Include
+        Path: ../PopWhile/PopWhile.sir
+        Module: PopWhile
+    Include
+        Path: ../RemoveLast/RemoveLast.sir
+        Module: RemoveLast
+    Include
+        Path: ../SplitArgs/SplitArgs.sir
+        Module: SplitArgs
+    Include
+        Path: ../TopDepth/TopDepth.sir
+        Module: TopDepth
+    Include
+        Path: ../TopIdx/TopIdx.sir
+        Module: TopIdx
+    Include
+        Path: ../ValidOperandKind/ValidOperandKind.sir
+        Module: ValidOperandKind
+    Include
+        Path: ../ValidateBlock/ValidateBlock.sir
+        Module: ValidateBlock
+    Include
+        Path: ../ValidateFunc/ValidateFunc.sir
+        Module: ValidateFunc
+    Include
+        Path: ../ValidateInstr/ValidateInstr.sir
+        Module: ValidateInstr
+    Include
+        Path: ../ValidateOperand/ValidateOperand.sir
+        Module: ValidateOperand
+    Include
+        Path: ../ValidateTerm/ValidateTerm.sir
+        Module: ValidateTerm
+    Include
+        Path: ../GenWasm/GenWasm.sir
+        Module: GenWasm
+    Include
+        Path: ../BytesList/BytesList.sir
+        Module: BytesList
+    Include
+        Path: ../WasiMain/WasiMain.sir
+        Module: WasiMain
+    Function
+        Type: Function
+        Role: Content
+        Name: main
+        Returns: ast
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Sys.Input
+            Params: src
+            Returns: raw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: "wasi"
+            Returns: wasiBase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Chr
+            Params: 10
+            Returns: nl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: wasiBase, nl
+            Returns: wasiLit
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrLen
+            Params: raw
+            Returns: rawLen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 5
+            Returns: wasiLen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Ge
+            Params: rawLen, wasiLen
+            Returns: hasLen
+        Branch
+            Condition: hasLen
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrSub
+                    Params: raw, 0, wasiLen
+                    Returns: prefix
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: prefix, wasiLit
+                    Returns: isWasi
+                Branch
+                    Condition: isWasi
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: "wasi"
+                            Returns: effMode
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Sub
+                            Params: rawLen, wasiLen
+                            Returns: restlen
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.StrSub
+                            Params: raw, wasiLen, restlen
+                            Returns: effSrc
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Sys.Input
+                            Params: mode
+                            Returns: mode
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: mode
+                            Returns: effMode
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: raw
+                            Returns: effSrc
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Sys.Input
+                    Params: mode
+                    Returns: mode
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: mode
+                    Returns: effMode
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                            Op: Core.Id
+                            Params: raw
+                            Returns: effSrc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Version query prefix
+            Op: Core.Lit
+            Params: "version"
+            Returns: versionBase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Chr
+            Params: 10
+            Returns: nlV
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: versionBase, nlV
+            Returns: versionLit
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 8
+            Returns: versionLen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Ge
+            Params: rawLen, versionLen
+            Returns: hasLenV
+        Branch
+            Condition: hasLenV
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrSub
+                    Params: raw, 0, versionLen
+                    Returns: vprefix
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: vprefix, versionLit
+                    Returns: isPrefixed
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: false
+                    Returns: isPrefixed
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Bare word without newline also asks
+            Op: Core.Eq
+            Params: raw, versionBase
+            Returns: isBare
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: isPrefixed, isBare
+            Returns: isVersion
+        Branch
+            Type: Branch
+            Role: Content
+            Caption: Version query answers without compiling
+            Condition: isVersion
+            TrueBlock
+                Type: Section
+                Role: Content
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Report the compiler stamp
+                    Op: Ctrl.Call
+                    Params: CompilerVersion
+                    Returns: versionStr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Say it loudly on the channel
+                    Op: Sys.Output
+                    Params: versionStr
+                    Returns: saidV
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: versionStr
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Version gate refuses newer-than-supported SIR loudly
+                    Op: Ctrl.Call
+                    Params: SirGate, effSrc
+                    Returns: gatedSrc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: effMode, "wasi"
+                    Returns: isEarlyWasi
+                Branch
+                    Condition: isEarlyWasi
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: WasiMain, gatedSrc
+                            Returns: out
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: Parse, gatedSrc
+                            Returns: ast
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: Lower, ast
+                            Returns: ir
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: effMode, "ir"
+                            Returns: isIr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: effMode, "neutral"
+                            Returns: isNeutral
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: effMode, "wasm"
+                            Returns: isWasm
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: effMode, "wasi"
+                            Returns: isWasiMode
+                        Branch
+                            Condition: isIr
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Id
+                                    Params: ir
+                                    Returns: out
+                            FalseBlock
+                                Branch
+                                    Condition: isNeutral
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: IsTargetNeutral, ir
+                                            Returns: out
+                                    FalseBlock
+                                        Branch
+                                            Condition: isWasm
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Lit
+                                                    Params: "STAGE lower done"
+                                                    Returns: lgLower
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: sir_log, lgLower
+                                                    Returns: lgLowerW
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Sys.Input
+                                                    Params: rt
+                                                    Returns: rt
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: GenWasm, ir, rt
+                                                    Returns: genOut
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Lit
+                                                    Params: "STAGE emit done"
+                                                    Returns: lgEmit
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: sir_log, lgEmit
+                                                    Returns: lgEmitW
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Id
+                                                    Params: genOut
+                                                    Returns: out
+                                            FalseBlock
+                                                Branch
+                                                    Condition: isWasiMode
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Ctrl.Call
+                                                            Params: WasiMain, gatedSrc
+                                                            Returns: out
+                                                    FalseBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Id
+                                                            Params: ast
+                                                            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

@@ -1,0 +1,137 @@
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR Standard Library - Functional
+
+    Function
+        Name: Identity
+        Params: x
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: x
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Constant
+        Params: v
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: v
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Apply
+        Params: fn, arg
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: fn, arg
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Compose
+        Params: f, g, x
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: f, x
+            Returns: fx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: g, fx
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Pipe
+        Params: value, fns
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: fns
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: fns, i
+                    Returns: fname
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: fname, value
+                    Returns: value
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: value
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

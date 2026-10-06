@@ -1,0 +1,300 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: Reaches (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: Reaches
+        Params: state, bid, target, seen
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: bid, null
+            Returns: bn
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: InList, seen, bid
+            Returns: inSeen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: bn, inSeen
+            Returns: skip
+        Branch
+            Condition: skip
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "bm"
+                    Returns: bm
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: bm, bid
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: b, null
+                    Returns: bnull
+                Branch
+                    Condition: bnull
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: seen, bid
+                            Returns: seen2
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: b, "term"
+                            Returns: term
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: term, "op"
+                            Returns: op
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: done
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "Jump"
+                            Returns: isJ
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: done, 0
+                            Returns: d0
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: isJ, d0
+                            Returns: take
+                        Branch
+                            Condition: take
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: term, "target"
+                                    Returns: tgt
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: tgt, target
+                                    Returns: same
+                                Branch
+                                    Condition: same
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: res
+                                Branch
+                                    Condition: same
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: Reaches, state, tgt, target, seen2
+                                            Returns: r
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: r
+                                            Returns: res
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: done
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "Return"
+                            Returns: isR
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: done, 0
+                            Returns: d1
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: isR, d1
+                            Returns: take
+                        Branch
+                            Condition: take
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 0
+                                    Returns: res
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: done
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "Branch"
+                            Returns: isB
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: done, 0
+                            Returns: d2
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: isB, d2
+                            Returns: take
+                        Branch
+                            Condition: take
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: term, "true"
+                                    Returns: t1
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: term, "false"
+                                    Returns: t2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Reaches, state, t1, target, seen2
+                                    Returns: r1
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Reaches, state, t2, target, seen2
+                                    Returns: r2
+                                Branch
+                                    Condition: r1
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: res
+                                Branch
+                                    Condition: r2
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: res
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: done
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: done, 0
+                            Returns: d3
+                        Branch
+                            Condition: d3
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: NextInOrder, state, bid
+                                    Returns: nxt
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: nxt, null
+                                    Returns: nn
+                                Branch
+                                    Condition: nn
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: Reaches, state, nxt, target, seen2
+                                            Returns: r
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: r
+                                            Returns: res
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: done
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

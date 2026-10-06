@@ -1,0 +1,9 @@
+FindDepthModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Returns the nesting depth of label target in the labels stack (distance from the stack top). Used to compute the br operand in WASM.
+    Provides: FindDepth(labels, target) -> res. labels — label id list (outer to inner); target — label sought; returns (L-1 - i), where i is the target index, or -1 if not found.
+    DependsOn: none (leaf; Core.ListGet/Eq/Sub/Ge, Loop).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../FindDepth/FindDepth.sir).
+    Notes: the WASM br operand counts from the block-stack top; FindDepth yields the needed offset for nested blocks/loops.

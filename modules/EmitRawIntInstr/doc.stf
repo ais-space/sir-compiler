@@ -1,0 +1,6 @@
+EmitRawIntInstrModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits the raw i64 domain: state["wbin"/"wcmp"/"wbit"] tables, IR.WNot, IR.WLit.
+    Provides: EmitRawIntInstr(state, ins) -> state.

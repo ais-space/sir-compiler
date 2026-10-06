@@ -1,0 +1,9 @@
+EmitBitBoxModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Appends boxing of the raw i64 result on the stack top (call sir_const_i64, helperIdx 5) plus local.set dst, if dst is not null. Used by boxed bit/shift Op (IR.BitAnd/BitOr/ShiftL/ShiftR).
+    Provides: EmitBitBox(state, dst) -> state. Precondition: raw i64 on the stack top; postcondition: boxing call appended plus (for dst) local store.
+    DependsOn: Push, PushList, EmitU32LEB, v2l from state (leaf wrapper; already in the GenWasm closure).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitBitBox/EmitBitBox.sir); called from EmitInstr.sir.
+    Notes: helperIdx of sir_const_i64 is 5 (canonical helper indexes; see GenWasm); the dst check mirrors the IR.Id branch.

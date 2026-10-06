@@ -1,0 +1,10 @@
+ioModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Host IO via WASI (fd_write/fd_read/path_open).
+    Provides: sir_print_i64(v) -> out Prints an integer.
+    Provides: sir_read_str() -> out Reads stdin into a string.
+    Provides: sir_print_val(v) -> out Prints any boxed value.
+    Provides: sir_read_file(pathBox) -> out Reads a whole file.
+    Provides: sir_log(msg) -> out Diagnostic log line (single iov, iovs_len=1).

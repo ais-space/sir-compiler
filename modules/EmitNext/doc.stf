@@ -1,0 +1,25 @@
+EmitNextModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: EmitNext — fallthrough emission (next in order)
+
+    Function
+        Name: EmitNext
+        Params: state, b, bid
+        Returns: state
+
+    DependsOn
+        EmitInstrs, NextInOrder, EmitBlock
+
+    Reads
+        b["instrs"]
+
+    Writes
+        state["out"]
+
+    Behavior
+        Emits the block instructions, computes NextInOrder(bid), recursively calls EmitBlock for the next block
+
+    Notes
+        Matches the fallthrough path in emit_block

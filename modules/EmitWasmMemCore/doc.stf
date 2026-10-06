@@ -1,0 +1,6 @@
+EmitWasmMemCoreModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits the raw linear-memory core: IR.Alloc/IR.Load/IR.Store, IR.GlobalGet/IR.GlobalSet, IR.MemSize/IR.MemGrow, IR.Trap.
+    Provides: EmitWasmMemCore(state, ins) -> state.

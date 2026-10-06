@@ -1,0 +1,193 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: LinkChildren (atomized module, O(n))
+
+    Function
+        Type: Function
+        Role: Content
+        Name: LinkChildren
+        Params: nodes, records, nodeCount
+        Returns: nodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: records
+            Returns: recCount
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: idxMap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: s
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: s, recCount
+            Returns: sCont
+        Loop
+            Condition: sCont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: records, s
+                    Returns: rec
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: rec, "idx"
+                    Returns: ridx
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSetMut
+                    Params: idxMap, ridx, rec
+                    Returns: idxMap
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: s, 1
+                    Returns: s
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: s, recCount
+                    Returns: sCont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: nodeCount
+            Returns: k
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Gt
+            Params: k, 0
+            Returns: kCont
+        Loop
+            Condition: kCont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: idxMap, k
+                    Returns: rec
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: rec, "parent"
+                    Returns: pIdx
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: rec, "kind"
+                    Returns: rkind
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: rec, "idx"
+                    Returns: ridx2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: rec, "name"
+                    Returns: rname
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: nodes, k
+                    Returns: child
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: nodes, pIdx
+                    Returns: parent
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: parent, "children"
+                    Returns: kids
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: nodes
+                    Returns: nnodes
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: parent, "name"
+                    Returns: pname
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: child, "name"
+                    Returns: cname
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: child
+                    Returns: childList
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: childList, kids
+                    Returns: kids
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSetMut
+                    Params: parent, "children", kids
+                    Returns: parent
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListSetMut
+                    Params: nodes, pIdx, parent
+                    Returns: nodes
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Sub
+                    Params: k, 1
+                    Returns: k
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Gt
+                    Params: k, 0
+                    Returns: kCont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: nodes

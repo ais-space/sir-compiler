@@ -1,0 +1,10 @@
+IsCollectionOpModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Stage-C guard predicate: decides whether an IR operation name belongs to the collection-operation set (lists: IR.ListMake/ListGet/ListSet/ListLen/ListPush/ListConcat; maps: IR.MapMake/MapGet/MapSet/MapKeys). Returns 1/0.
+    Provides
+        Item: IsCollectionOp(op) -> res (1/0)
+    DependsOn: none (Core.* only).
+    Composition: Native include from modules/GenWasm/GenWasm.sir.
+    Notes: Stage C. Emitters EmitListInstr/EmitMapInstr filter their own operations themselves (PathOpenInstr/FdCloseInstr pattern); the predicate remains the shared classification point for future checks and documentation of the set.

@@ -1,0 +1,8 @@
+ModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Name: CollectStr
+    Purpose: Collects unique string literals (IR.Const with string value, plus IR.ReadFile path literals) in IR traversal order and assigns them 4-byte-aligned offsets in the 0..1024 memory region for the data section. Returns Map string-to-[offset, len] (strMap). Uses Core.IntDiv for integer alignment.
+    Contract: CollectStr(ir, base) -> {order: [str...], map: {str: [off, len]}}. base — literal start offset (upper bound of runtime data segments). Traversal: instrs + term of every block of every function. IR.Trace and IR.TraceVal are skipped entirely (strip-to-zero §7.2.2).
+    DependsOn: StrBytes (UTF-8 bytes of the string for length/alignment computation).

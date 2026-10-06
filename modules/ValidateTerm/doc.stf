@@ -1,0 +1,7 @@
+ValidateTermModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Validates a block terminator: op must be one of Return/Branch/Jump/Call. Returns 1 on success, 0 otherwise.
+    Provides: ValidateTerm(term) -> ok.
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../ValidateTerm/ValidateTerm.sir).

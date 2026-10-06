@@ -1,0 +1,25 @@
+EmitLoopExitModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: EmitLoopExit — loop exit emission (isLoop=true)
+
+    Function
+        Name: EmitLoopExit
+        Params: state, b, term, bodyId, exitId, bid
+        Returns: state
+
+    DependsOn
+        EmitInstrs, EmitCond, EmitBlock, Push, PushList
+
+    Reads
+        b["instrs"], term["cond"], state["labels"]
+
+    Writes
+        state["out"], state["labels"]
+
+    Behavior
+        Emits the structured loop block: BLOCK/LOOP, instrs, EmitCond, br_if 1, EmitBlock(bodyId), END/END, labels restore, EmitBlock(exitId)
+
+    Notes
+        Matches the isLoop=true path in emit_block

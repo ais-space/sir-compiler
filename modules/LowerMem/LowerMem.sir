@@ -1,0 +1,209 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: LowerMem (atomized module) - Mem.* lowering dispatch by region kind
+
+    Function
+        Type: Function
+        Role: Content
+        Name: LowerMemKind
+        Params: op, args
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: ""
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Mem.Alloc"
+            Returns: cA
+        Branch
+            Condition: cA
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.Alloc"
+                    Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Mem.Read"
+            Returns: cR
+        Branch
+            Condition: cR
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: args
+                    Returns: n
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: n, 3
+                    Returns: isBufArity
+                Branch
+                    Condition: isBufArity
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: args, 0
+                            Returns: a0
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: a0, "val"
+                            Returns: v0
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.TypeOf
+                            Params: v0
+                            Returns: vt
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: vt, "str"
+                            Returns: isStr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: v0, "heap"
+                            Returns: isHeapName
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: isStr, isHeapName
+                            Returns: take
+                        Branch
+                            Condition: take
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: "IR.Load"
+                                    Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Mem.Write"
+            Returns: cW
+        Branch
+            Condition: cW
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: args
+                    Returns: n
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: n, 4
+                    Returns: isBufArity
+                Branch
+                    Condition: isBufArity
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: args, 0
+                            Returns: a0
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: a0, "val"
+                            Returns: v0
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.TypeOf
+                            Params: v0
+                            Returns: vt
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: vt, "str"
+                            Returns: isStr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: v0, "heap"
+                            Returns: isHeapName
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: isStr, isHeapName
+                            Returns: take
+                        Branch
+                            Condition: take
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: "IR.Store"
+                                    Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Mem.CursorGet"
+            Returns: cG
+        Branch
+            Condition: cG
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.GlobalGet"
+                    Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Mem.CursorSet"
+            Returns: cS
+        Branch
+            Condition: cS
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.GlobalSet"
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

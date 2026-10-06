@@ -1,0 +1,8 @@
+ValidOperandKindModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Valid operand-kind predicate: returns 1 if kind ∈ {ref, const, global, null}, else 0. Pure check for ValidateOperand.
+    Provides: ValidOperandKind(kind) -> ok.
+    DependsOn: none (leaf with no dependencies on other modules)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../ValidOperandKind/ValidOperandKind.sir).

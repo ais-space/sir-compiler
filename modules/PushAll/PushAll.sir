@@ -1,0 +1,71 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: PushAll (linear append of all elements; replaces quadratic concat-accumulation)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: PushAll
+        Params: acc, xs
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: xs
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: xs, i
+                    Returns: e
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: acc, e
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: acc
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

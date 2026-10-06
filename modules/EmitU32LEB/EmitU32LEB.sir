@@ -1,0 +1,138 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitU32LEB (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitU32LEB
+        Params: n
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: null
+            Returns: nullLit
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: n, nullLit
+            Returns: isNull
+        Branch
+            Condition: isNull
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params:
+                    Returns: out
+            FalseBlock
+                Type: FalseBlock
+                Role: Content
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: n
+                    Returns: cur
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params:
+                    Returns: out
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Gt
+                    Params: cur, 0
+                    Returns: cont
+                Loop
+                    Condition: cont
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.IntDiv
+                            Params: cur, 128
+                            Returns: q
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Mul
+                            Params: q, 128
+                            Returns: q128
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Sub
+                            Params: cur, q128
+                            Returns: b
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Ne
+                            Params: q, 0
+                            Returns: more
+                        Branch
+                            Condition: more
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: b, 128
+                                    Returns: b
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: out, b
+                            Returns: out
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: q
+                            Returns: cur
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Gt
+                            Params: cur, 0
+                            Returns: cont
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: out
+                    Returns: ol
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: ol, 0
+            Returns: empty
+        Branch
+            Condition: empty
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 0
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

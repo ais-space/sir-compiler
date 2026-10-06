@@ -1,0 +1,10 @@
+EmitListInstrModuleDoc
+    Version: 2
+    Language: en
+    Format: STF
+    Purpose: Emission of stage-C list operations (all operands and results — portable boxes). IR.ListMake: empty list sir_make_list #20 (i64.const 0 via sir_const_i64 #5), then threading dst through N iterations of sir_list_push #37 with local reassignment (interim: helper mutates the container and returns it back (divergence from §6.7 documented, Phase 8 unification)); IR.ListGet #21 / ListSet #22 / ListLen #36 / ListPush #37 / ListConcat #38 — direct calls; at dst=null the result is dropped (26), the constructor preserves operand effects. Self-filtering by operation name; done written to state (MapSet) only on match.
+    Provides
+        Item: EmitListInstr(state, ins) -> state
+    DependsOn: EmitOperand, Push, PushList, EmitU32LEB.
+    Composition: Native Include from modules/GenWasm/GenWasm.sir; hook from EmitInstr after EmitStringInstr/EmitMemInstr.
+    Notes: guard-Branch structure (PathOpenInstr lesson: instruction children are dead). Single bytes (drop 26, i64.const 0 = Push 66 + Push 0) written with bare Push WITHOUT PushList (PushList appends the whole leb list). Loop conditions — Core.* only (compiler context has neither IR.* nor sir_const_bool). String elements — via variables only (Core.Lit).

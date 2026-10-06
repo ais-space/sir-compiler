@@ -1,0 +1,25 @@
+EmitBranchJoinModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: EmitBranchJoin — non-loop Branch emission (isLoop=false)
+
+    Function
+        Name: EmitBranchJoin
+        Params: state, b, term, join
+        Returns: state
+
+    DependsOn
+        EmitInstrs, EmitCond, EmitBlock, CommonJoin, Push, PushList
+
+    Reads
+        b["instrs"], term["cond"], term["true"], term["false"], state["labels"]
+
+    Writes
+        state["out"], state["labels"]
+
+    Behavior
+        Emits the if/else structure: BLOCK, instrs, EmitCond, IF, EmitBlock(true), br 0, ELSE, EmitBlock(false), br 0, END, END, labels restore, EmitBlock(join)
+
+    Notes
+        Matches the isLoop=false path in emit_block

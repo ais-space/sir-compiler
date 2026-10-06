@@ -1,0 +1,66 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitNext — fallthrough emission (next in order)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitNext
+        Params: state, b, bid
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: b, "instrs"
+            Returns: instrs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitInstrs, state, instrs
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: NextInOrder, state, bid
+            Returns: nxt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: nxt, null
+            Returns: isLast
+        Branch
+            Condition: isLast
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: b, "term"
+                    Returns: term
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitReturn, state, b, term
+                    Returns: state
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitBlock, state, nxt
+                    Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

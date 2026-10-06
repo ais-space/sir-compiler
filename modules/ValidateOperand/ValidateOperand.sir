@@ -1,0 +1,32 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ValidateOperand (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ValidateOperand
+        Params: operand
+        Returns: ok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: operand, "kind"
+            Returns: kind
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: ValidOperandKind, kind
+            Returns: ok
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ok

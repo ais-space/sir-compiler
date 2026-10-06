@@ -1,0 +1,8 @@
+string_searchModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: String search and compare.
+    Provides: sir_str_find(hay, needle, start) -> out First index at/after start, else null.
+    Provides: sir_str_count(hay, needle) -> out Occurrence count.
+    Provides: sir_str_eq(a, b) -> out Byte equality.

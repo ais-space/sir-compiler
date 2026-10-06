@@ -1,0 +1,1490 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR runtime - list helpers over the heap buffer region (Foundation 2)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_make_list
+        Params: n
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: n, 8
+            Returns: np8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: np8, 8
+            Returns: nraw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: nraw, 63
+            Returns: t63
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WShrU
+            Params: t63, 6
+            Returns: nch0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: nch0, 0
+            Returns: isZeroRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, isZeroRaw
+            Returns: isZero
+        Branch
+            Condition: isZero
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 1
+                    Returns: nch
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: nch0
+                    Returns: nch
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: nch, 4
+            Returns: arrBytes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc, arrBytes
+            Returns: arr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 260
+            Returns: chb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: j0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: j0
+            Returns: j
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtU
+            Params: j, nch
+            Returns: contRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, contRaw
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: alloc, chb
+                    Returns: chunk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: chunk, 0, 4
+                    Returns: wcl
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WMul
+                    Params: j, 4
+                    Returns: jo
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: arr, jo
+                    Returns: jcell
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: jcell, chunk, 4
+                    Returns: wj
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: j, 1
+                    Returns: j
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtU
+                    Params: j, nch
+                    Returns: contRaw
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, contRaw
+                    Returns: cont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 12
+            Returns: c12
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc, c12
+            Returns: st
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: st, nraw, 4
+            Returns: w1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: st, 4
+            Returns: s4
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: s4, nch, 4
+            Returns: w2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: st, 8
+            Returns: s8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: s8, arr, 4
+            Returns: w3
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 16
+            Returns: c16
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc, c16
+            Returns: val
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: val, 3, 4
+            Returns: w4
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: val, 8
+            Returns: v8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: v8, st, 8
+            Returns: w5
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: val
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_list_len
+        Params: lst
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: lst, 8
+            Returns: lstp82
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: lstp82, 8
+            Returns: st
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: st, 4
+            Returns: lraw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_i64, lraw
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_list_get
+        Params: lst, idx
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: lst, 4
+            Returns: ltag
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: ltag, 2
+            Returns: isStrR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, isStrR
+            Returns: isStrB
+        Branch
+            Condition: isStrB
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: lst, 8
+                    Returns: lstp8s
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: lstp8s, 8
+                    Returns: sst
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: idx, 8
+                    Returns: idxp8s
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: idxp8s, 8
+                    Returns: sraw
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: sst, 4
+                    Returns: sst4
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: sst4, 4
+                    Returns: sptr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: sptr, sraw
+                    Returns: saddr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: saddr, 1
+                    Returns: sbyte
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_i64, sbyte
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: lst, 8
+                    Returns: lstp
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: lstp, 8
+                    Returns: st
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: st, 4
+                    Returns: glen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: st, 8
+                    Returns: s8
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: s8, 4
+                    Returns: chunks
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: idx, 8
+                    Returns: idxp
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: idxp, 8
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: i, 0
+                    Returns: gneg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WGeS
+                    Params: i, glen
+                    Returns: gover
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WOr
+                    Params: gneg, gover
+                    Returns: graw
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, graw
+                    Returns: gbad
+                Branch
+                    Condition: gbad
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Trap
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: i
+                            Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WShrU
+                    Params: i, 6
+                    Returns: ch
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAnd
+                    Params: i, 63
+                    Returns: off
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WMul
+                    Params: ch, 4
+                    Returns: cho
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: chunks, cho
+                    Returns: chcell
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: chcell, 4
+                    Returns: chptr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: chptr, 4
+                    Returns: c4
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WMul
+                    Params: off, 4
+                    Returns: ofo
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: c4, ofo
+                    Returns: cell
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: cell, 4
+                    Returns: eraw
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: eraw
+                    Returns: out
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: eraw
+                    Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_list_set
+        Params: lst, idx, val
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: lst, 8
+            Returns: lp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: lp, 8
+            Returns: lst_st
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: lst_st, 4
+            Returns: llen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: idx, 8
+            Returns: ip8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: ip8, 8
+            Returns: iraw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: zero
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_i64, zero
+            Returns: zb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_make_list, zb
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: j0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: j0
+            Returns: j
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: j, llen
+            Returns: cr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, cr
+            Returns: cp
+        Loop
+            Condition: cp
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_i64, j
+                    Returns: jb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: j, iraw
+                    Returns: eq
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, eq
+                    Returns: eqb
+                Branch
+                    Condition: eqb
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: val
+                            Returns: chosen
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_list_get, lst, jb
+                            Returns: elem
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: elem
+                            Returns: chosen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_list_append, res, chosen
+                    Returns: res
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: j, 1
+                    Returns: j
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: j, llen
+                    Returns: cr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, cr
+                    Returns: cp
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: res
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_list_push
+        Params: lst, val
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_list_append, lst, val
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_list_concat
+        Params: a, b
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: z0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_i64, z0
+            Returns: zb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_make_list, zb
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_list_len, a
+            Returns: lenaBox
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: lenaBox, 8
+            Returns: lena8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: lena8, 8
+            Returns: lena
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_list_len, b
+            Returns: lenbBox
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: lenbBox, 8
+            Returns: lenb8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: lenb8, 8
+            Returns: lenb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: i0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: i0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtU
+            Params: i, lena
+            Returns: contRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, contRaw
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_i64, i
+                    Returns: ib
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_list_get, a, ib
+                    Returns: elem
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_list_append, res, elem
+                    Returns: res
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtU
+                    Params: i, lena
+                    Returns: contRaw
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, contRaw
+                    Returns: cont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: j0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: j0
+            Returns: j
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtU
+            Params: j, lenb
+            Returns: contRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, contRaw
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_i64, j
+                    Returns: jb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_list_get, b, jb
+                    Returns: elem
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_list_append, res, elem
+                    Returns: res
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: j, 1
+                    Returns: j
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtU
+                    Params: j, lenb
+                    Returns: contRaw
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, contRaw
+                    Returns: cont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: res
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_list_append
+        Params: lst, val
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: lst, 8
+            Returns: lp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: lp, 8
+            Returns: st
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: st, 4
+            Returns: len
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: st, 4
+            Returns: s4
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: s4, 4
+            Returns: nch
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: st, 8
+            Returns: s8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: s8, 4
+            Returns: chunks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: nch, 64
+            Returns: cap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtU
+            Params: len, cap
+            Returns: hasRoomRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, hasRoomRaw
+            Returns: hasRoom
+        Branch
+            Condition: hasRoom
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WSub
+                    Params: nch, 1
+                    Returns: nm1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WMul
+                    Params: nm1, 4
+                    Returns: nmo
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: chunks, nmo
+                    Returns: nmcell
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: nmcell, 4
+                    Returns: chptr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WMul
+                    Params: nm1, 64
+                    Returns: nmb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WSub
+                    Params: len, nmb
+                    Returns: off
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WMul
+                    Params: off, 4
+                    Returns: ofo
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: chptr, 4
+                    Returns: c4
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: c4, ofo
+                    Returns: cell
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: cell, val, 4
+                    Returns: wv
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: len, 1
+                    Returns: len2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 12
+                    Returns: c12nb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: alloc, c12nb
+                    Returns: stnb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: stnb, len2, 4
+                    Returns: wnb0
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: stnb, 4
+                    Returns: snb4
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: snb4, nch, 4
+                    Returns: wnb1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: stnb, 8
+                    Returns: snb8
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: snb8, chunks, 4
+                    Returns: wnb2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 16
+                    Returns: c16nb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: alloc, c16nb
+                    Returns: valnb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: valnb, 3, 4
+                    Returns: wnb3
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: valnb, 8
+                    Returns: vnb8
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: vnb8, stnb, 8
+                    Returns: wnb4
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: valnb
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: nch, 1
+                    Returns: nch2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WMul
+                    Params: nch2, 4
+                    Returns: arrB
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: alloc, arrB
+                    Returns: newarr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 0
+                    Returns: k0
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: k0
+                    Returns: k
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtU
+                    Params: k, nch
+                    Returns: contRaw
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, contRaw
+                    Returns: cont
+                Loop
+                    Condition: cont
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WMul
+                            Params: k, 4
+                            Returns: ko
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: chunks, ko
+                            Returns: kcell
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Load
+                            Params: kcell, 4
+                            Returns: kp
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: newarr, ko
+                            Returns: kdst
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Store
+                            Params: kdst, kp, 4
+                            Returns: kw
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: k, 1
+                            Returns: k
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLtU
+                            Params: k, nch
+                            Returns: contRaw
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, contRaw
+                            Returns: cont
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 260
+                    Returns: chb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: alloc, chb
+                    Returns: newchunk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: newchunk, 0, 4
+                    Returns: wcl
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WMul
+                    Params: nch, 4
+                    Returns: tco
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: newarr, tco
+                    Returns: tcell
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: tcell, newchunk, 4
+                    Returns: wtc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: newchunk, 4
+                    Returns: nc4
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: nc4, val, 4
+                    Returns: wvv
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: len, 1
+                    Returns: len3
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 12
+                    Returns: c12nb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: alloc, c12nb
+                    Returns: stnb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: stnb, len3, 4
+                    Returns: wnb0
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: stnb, 4
+                    Returns: snb4
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: snb4, nch2, 4
+                    Returns: wnb1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: stnb, 8
+                    Returns: snb8
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: snb8, newarr, 4
+                    Returns: wnb2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 16
+                    Returns: c16nb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: alloc, c16nb
+                    Returns: valnb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: valnb, 3, 4
+                    Returns: wnb3
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: valnb, 8
+                    Returns: vnb8
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: vnb8, stnb, 8
+                    Returns: wnb4
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: valnb
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_list_pop
+        Params: lst
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_list_len, lst
+            Returns: nBox
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: nBox, 8
+            Returns: nBox8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: nBox8, 8
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: n, 0
+            Returns: emptyRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, emptyRaw
+            Returns: isEmpty
+        Branch
+            Condition: isEmpty
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Const
+                    Params: "ListPop on empty list"
+                    Returns: msg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_err, msg
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 0
+                    Returns: zero
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_i64, zero
+                    Returns: zbox
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_make_list, zbox
+                    Returns: res
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 0
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 1
+                    Returns: one
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WSub
+                    Params: n, one
+                    Returns: nm1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: i, nm1
+                    Returns: cr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, cr
+                    Returns: cont
+                Loop
+                    Condition: cont
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_i64, i
+                            Returns: ibox
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_list_get, lst, ibox
+                            Returns: e
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_list_append, res, e
+                            Returns: res
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: i, one
+                            Returns: i
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLtS
+                            Params: i, nm1
+                            Returns: cr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, cr
+                            Returns: cont
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: res
+                    Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

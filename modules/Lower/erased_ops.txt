@@ -1,0 +1,9 @@
+# R16.10: registry of ops erased by the frontend (Lower/constructors).
+# Single source of truth for the spec lint (ERASED set).
+# One op per line; # lines are comments.
+False
+Id
+List
+Lit
+Map
+True

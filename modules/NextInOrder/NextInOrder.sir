@@ -1,0 +1,96 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: NextInOrder (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: NextInOrder
+        Params: state, bid
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: null
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "order"
+            Returns: order
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: IndexOf, order, bid
+            Returns: idx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: idx, -1
+            Returns: nf
+        Branch
+            Condition: nf
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: order
+                    Returns: ol
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: idx, 1
+                    Returns: nxtIdx
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Ge
+                    Params: nxtIdx, ol
+                    Returns: past
+                Branch
+                    Condition: past
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: order, nxtIdx
+                            Returns: nxt
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: state, "emitted"
+                            Returns: em
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: InList, em, nxt
+                            Returns: inEm
+                        Branch
+                            Condition: inEm
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: nxt
+                                    Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

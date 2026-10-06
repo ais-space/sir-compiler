@@ -1,0 +1,2483 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR runtime - float<->str conversion
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_num_to_str_float
+        Params: v
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: v, 8
+            Returns: nm8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: nm8, 8
+            Returns: nmb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: nmzI
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64FromI64
+            Params: nmzI
+            Returns: nmz
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 1
+            Returns: nmoneI
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64FromI64
+            Params: nmoneI
+            Returns: nmone
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64Div
+            Params: nmone, nmb
+            Returns: nmrecip
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64Lt
+            Params: nmrecip, nmz
+            Returns: nnegR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, nnegR
+            Returns: nneg
+        Branch
+            Condition: nneg
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.F64Sub
+                    Params: nmz, nmb
+                    Returns: nmf
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: nmb
+                    Returns: nmf
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 10
+            Returns: nmtenI
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64FromI64
+            Params: nmtenI
+            Returns: nmten
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 4611686018427387904
+            Returns: nmboundI
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64FromI64
+            Params: nmboundI
+            Returns: nmbound
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64Lt
+            Params: nmf, nmbound
+            Returns: rngR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, rngR
+            Returns: rngB
+        Branch
+            Condition: rngB
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: nmf
+                    Returns: nmf
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Trap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: nmdone
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 1
+            Returns: nmqp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: nmqp, 18
+            Returns: nmcr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WNot
+            Params: nmdone
+            Returns: nmnd
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAnd
+            Params: nmcr, nmnd
+            Returns: nmcr2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, nmcr2
+            Returns: nmploop
+        Loop
+            Condition: nmploop
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 1
+                    Returns: nmoneI
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.F64FromI64
+                    Params: nmoneI
+                    Returns: nmscale
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 0
+                    Returns: nme
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: nme, nmqp
+                    Returns: nmesr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, nmesr
+                    Returns: nmescale
+                Loop
+                    Condition: nmescale
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.F64Mul
+                            Params: nmscale, nmten
+                            Returns: nmscale
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: nme, 1
+                            Returns: nme
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLtS
+                            Params: nme, nmqp
+                            Returns: nmesr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, nmesr
+                            Returns: nmescale
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.F64Mul
+                    Params: nmf, nmscale
+                    Returns: nmscaled
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.F64Lt
+                    Params: nmscaled, nmbound
+                    Returns: nminR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, nminR
+                    Returns: nmin
+                Branch
+                    Condition: nmin
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.F64ToI64
+                            Params: nmscaled
+                            Returns: nmn
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 1
+                            Returns: nmpowI
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 0
+                            Returns: nmk
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLtS
+                            Params: nmk, nmqp
+                            Returns: nmkr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, nmkr
+                            Returns: nmkloop
+                        Loop
+                            Condition: nmkloop
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WMul
+                                    Params: nmpowI, 10
+                                    Returns: nmpowI
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: nmk, 1
+                                    Returns: nmk
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLtS
+                                    Params: nmk, nmqp
+                                    Returns: nmkr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, nmkr
+                                    Returns: nmkloop
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WDivS
+                            Params: nmn, nmpowI
+                            Returns: nmip
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WRemS
+                            Params: nmn, nmpowI
+                            Returns: nmfp
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: -1
+                            Returns: nmlast
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WDivS
+                            Params: nmpowI, 10
+                            Returns: nmpw
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 0
+                            Returns: nmj
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLtS
+                            Params: nmj, nmqp
+                            Returns: nmjr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, nmjr
+                            Returns: nmjloop
+                        Loop
+                            Condition: nmjloop
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WDivS
+                                    Params: nmfp, nmpw
+                                    Returns: nmqd
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WRemS
+                                    Params: nmqd, 10
+                                    Returns: nmd
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WNe
+                                    Params: nmd, 0
+                                    Returns: nmdnzR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, nmdnzR
+                                    Returns: nmdnz
+                                Branch
+                                    Condition: nmdnz
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Id
+                                            Params: nmj
+                                            Returns: nmlast
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Id
+                                            Params: nmlast
+                                            Returns: nmlast
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WDivS
+                                    Params: nmpw, 10
+                                    Returns: nmpw
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: nmj, 1
+                                    Returns: nmj
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLtS
+                                    Params: nmj, nmqp
+                                    Returns: nmjr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, nmjr
+                                    Returns: nmjloop
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: nmlast, 1
+                            Returns: nmflen
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_i64, nmip
+                            Returns: nmipB
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_num_to_str, nmipB
+                            Returns: nmintS
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Const
+                            Params: "."
+                            Returns: nmdotS
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_str_concat, nmintS, nmdotS
+                            Returns: nmcand
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WGtS
+                            Params: nmflen, 0
+                            Returns: nmflR
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, nmflR
+                            Returns: nmfl
+                        Branch
+                            Condition: nmfl
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLit
+                                    Params: 1
+                                    Returns: nmpw
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLit
+                                    Params: 0
+                                    Returns: nmjj
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: nmjj, 1
+                                    Returns: nmjj1
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLtS
+                                    Params: nmjj1, nmqp
+                                    Returns: nmjjr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, nmjjr
+                                    Returns: nmjjloop
+                                Loop
+                                    Condition: nmjjloop
+                                    Body
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WMul
+                                            Params: nmpw, 10
+                                            Returns: nmpw
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WAdd
+                                            Params: nmjj, 1
+                                            Returns: nmjj
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WAdd
+                                            Params: nmjj, 1
+                                            Returns: nmjj1
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WLtS
+                                            Params: nmjj1, nmqp
+                                            Returns: nmjjr
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_const_bool, nmjjr
+                                            Returns: nmjjloop
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WDivS
+                                    Params: nmfp, nmpw
+                                    Returns: nmqd
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WRemS
+                                    Params: nmqd, 10
+                                    Returns: nmd0
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_i64, nmd0
+                                    Returns: nmd0B
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_num_to_str, nmd0B
+                                    Returns: nmcand2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_str_concat, nmcand, nmcand2
+                                    Returns: nmcand
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLit
+                                    Params: 1
+                                    Returns: nmjj
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLtS
+                                    Params: nmjj, nmflen
+                                    Returns: nmjjr2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, nmjjr2
+                                    Returns: nmjjloop2
+                                Loop
+                                    Condition: nmjjloop2
+                                    Body
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WDivS
+                                            Params: nmpw, 10
+                                            Returns: nmpw
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WDivS
+                                            Params: nmfp, nmpw
+                                            Returns: nmqd
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WRemS
+                                            Params: nmqd, 10
+                                            Returns: nmd
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_const_i64, nmd
+                                            Returns: nmdB
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_num_to_str, nmdB
+                                            Returns: nmdS
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_str_concat, nmcand, nmdS
+                                            Returns: nmcand
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WAdd
+                                            Params: nmjj, 1
+                                            Returns: nmjj
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WLtS
+                                            Params: nmjj, nmflen
+                                            Returns: nmjjr2
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_const_bool, nmjjr2
+                                            Returns: nmjjloop2
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.Const
+                                    Params: "0"
+                                    Returns: nmzS
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_str_concat, nmcand, nmzS
+                                    Returns: nmcand
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_parse_float, nmcand
+                            Returns: nmchk
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: nmchk, 8
+                            Returns: nmchk8
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Load
+                            Params: nmchk8, 8
+                            Returns: nmchkB
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.F64Eq
+                            Params: nmf, nmchkB
+                            Returns: nmrtR
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, nmrtR
+                            Returns: nmrt
+                        Branch
+                            Condition: nmrt
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLit
+                                    Params: 1
+                                    Returns: nmdone
+                                Branch
+                                    Condition: nneg
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.Const
+                                            Params: "-"
+                                            Returns: nmminS
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_str_concat, nmminS, nmcand
+                                            Returns: out
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Id
+                                            Params: nmcand
+                                            Returns: out
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Id
+                                    Params: nmdone
+                                    Returns: nmdone
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: nmdone
+                            Returns: nmdone
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: nmqp, 1
+                    Returns: nmqp
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: nmqp, 18
+                    Returns: nmcr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WNot
+                    Params: nmdone
+                    Returns: nmnd
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAnd
+                    Params: nmcr, nmnd
+                    Returns: nmcr2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, nmcr2
+                    Returns: nmploop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, nmdone
+            Returns: nmdoneB
+        Branch
+            Condition: nmdoneB
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: out
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Trap
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_parse_float
+        Params: s
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: s, 8
+            Returns: qs8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: qs8, 8
+            Returns: qss
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: qss, 4
+            Returns: qslen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: qss, 4
+            Returns: qss4
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: qss4, 4
+            Returns: qsptr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qstart
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: qk, qslen
+            Returns: qcr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qcr
+            Returns: qscanning
+        Loop
+            Condition: qscanning
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: qsptr, qk
+                    Returns: qaddr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: qaddr, 1
+                    Returns: qc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: qc, 32
+                    Returns: qspR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: qc, 9
+                    Returns: qtabR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WOr
+                    Params: qspR, qtabR
+                    Returns: qwsR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qwsR
+                    Returns: qws
+                Branch
+                    Condition: qws
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: qk, 1
+                            Returns: qk
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: qk
+                            Returns: qstart
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: qslen
+                            Returns: qk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: qk, qslen
+                    Returns: qcr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qcr
+                    Returns: qscanning
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: qstart
+            Returns: qk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qneg
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qintpart
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qintD
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qfrac
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qfracL
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qdot
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qexpS
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qexpN
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qexpV
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qexpD
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qbrk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qfbrk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qebrk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 10
+            Returns: qtenI
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: qk, qslen
+            Returns: qhasR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qhasR
+            Returns: qhas
+        Branch
+            Condition: qhas
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Trap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: qsptr, qk
+            Returns: qsaddr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: qsaddr, 1
+            Returns: qsc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: qsc, 45
+            Returns: qminR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qminR
+            Returns: qmin
+        Branch
+            Condition: qmin
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 1
+                    Returns: qneg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: qk, 1
+                    Returns: qk
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: qsc, 43
+                    Returns: qplusR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qplusR
+                    Returns: qplus
+                Branch
+                    Condition: qplus
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: qk, 1
+                            Returns: qk
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: qk
+                            Returns: qk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: qk, qslen
+            Returns: qdr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qdr
+            Returns: qdig
+        Loop
+            Condition: qdig
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: qsptr, qk
+                    Returns: qdaddr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: qdaddr, 1
+                    Returns: qdc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtU
+                    Params: qdc, 48
+                    Returns: qdltR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WGtU
+                    Params: qdc, 57
+                    Returns: qdgtR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WOr
+                    Params: qdltR, qdgtR
+                    Returns: qdnotR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: qdc, 95
+                    Returns: qdskR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WNot
+                    Params: qdskR
+                    Returns: qnskR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAnd
+                    Params: qdnotR, qnskR
+                    Returns: qdnotR2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qdnotR2
+                    Returns: qdnot
+                Branch
+                    Condition: qdnot
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 1
+                            Returns: qbrk
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WEq
+                            Params: qdc, 95
+                            Returns: qduR
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, qduR
+                            Returns: qdu
+                        Branch
+                            Condition: qdu
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WGtS
+                                    Params: qintD, 0
+                                    Returns: qdHasR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, qdHasR
+                                    Returns: qdHas
+                                Branch
+                                    Condition: qdHas
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WAdd
+                                            Params: qk, 1
+                                            Returns: qnx
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WLtS
+                                            Params: qnx, qslen
+                                            Returns: qnxInR
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_const_bool, qnxInR
+                                            Returns: qnxIn
+                                        Branch
+                                            Condition: qnxIn
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WAdd
+                                                    Params: qsptr, qnx
+                                                    Returns: qnxA
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.Load
+                                                    Params: qnxA, 1
+                                                    Returns: qnxC
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WLtU
+                                                    Params: qnxC, 48
+                                                    Returns: qnxLtR
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WGtU
+                                                    Params: qnxC, 57
+                                                    Returns: qnxGtR
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WOr
+                                                    Params: qnxLtR, qnxGtR
+                                                    Returns: qnxNotR
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: sir_const_bool, qnxNotR
+                                                    Returns: qnxNot
+                                                Branch
+                                                    Condition: qnxNot
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: IR.WLit
+                                                            Params: 1
+                                                            Returns: qbrk
+                                                    FalseBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: IR.WAdd
+                                                            Params: qk, 1
+                                                            Returns: qk
+                                            FalseBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WLit
+                                                    Params: 1
+                                                    Returns: qbrk
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WLit
+                                            Params: 1
+                                            Returns: qbrk
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WMul
+                                    Params: qintpart, 10
+                                    Returns: qt1
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WSub
+                                    Params: qdc, 48
+                                    Returns: qdd
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: qt1, qdd
+                                    Returns: qintpart
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: qintD, 1
+                                    Returns: qintD
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: qk, 1
+                                    Returns: qk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: qk, qslen
+                    Returns: qdr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WNot
+                    Params: qbrk
+                    Returns: qnbrk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAnd
+                    Params: qdr, qnbrk
+                    Returns: qdr2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qdr2
+                    Returns: qdig
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: qk, qslen
+            Returns: qdotInR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qdotInR
+            Returns: qdotIn
+        Branch
+            Condition: qdotIn
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: qsptr, qk
+                    Returns: qdotA
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: qdotA, 1
+                    Returns: qdotC
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: qdotC, 46
+                    Returns: qdotEqR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qdotEqR
+                    Returns: qdotEq
+                Branch
+                    Condition: qdotEq
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 1
+                            Returns: qdot
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: qk, 1
+                            Returns: qk
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLtS
+                            Params: qk, qslen
+                            Returns: qfr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, qfr
+                            Returns: qfdig
+                        Loop
+                            Condition: qfdig
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: qsptr, qk
+                                    Returns: qfaddr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.Load
+                                    Params: qfaddr, 1
+                                    Returns: qfc
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLtU
+                                    Params: qfc, 48
+                                    Returns: qfltR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WGtU
+                                    Params: qfc, 57
+                                    Returns: qfgtR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WOr
+                                    Params: qfltR, qfgtR
+                                    Returns: qfnotR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WEq
+                                    Params: qfc, 95
+                                    Returns: qfskR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WNot
+                                    Params: qfskR
+                                    Returns: qfnskR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAnd
+                                    Params: qfnotR, qfnskR
+                                    Returns: qfnotR2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, qfnotR2
+                                    Returns: qfnot
+                                Branch
+                                    Condition: qfnot
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WLit
+                                            Params: 1
+                                            Returns: qfbrk
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WEq
+                                            Params: qfc, 95
+                                            Returns: qfuR
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_const_bool, qfuR
+                                            Returns: qfu
+                                        Branch
+                                            Condition: qfu
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WGtS
+                                                    Params: qfracL, 0
+                                                    Returns: qfHasR
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: sir_const_bool, qfHasR
+                                                    Returns: qfHas
+                                                Branch
+                                                    Condition: qfHas
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: IR.WAdd
+                                                            Params: qk, 1
+                                                            Returns: qfnx
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: IR.WLtS
+                                                            Params: qfnx, qslen
+                                                            Returns: qfnxInR
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Ctrl.Call
+                                                            Params: sir_const_bool, qfnxInR
+                                                            Returns: qfnxIn
+                                                        Branch
+                                                            Condition: qfnxIn
+                                                            TrueBlock
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.WAdd
+                                                                    Params: qsptr, qfnx
+                                                                    Returns: qfnxA
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.Load
+                                                                    Params: qfnxA, 1
+                                                                    Returns: qfnxC
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.WLtU
+                                                                    Params: qfnxC, 48
+                                                                    Returns: qfnxLtR
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.WGtU
+                                                                    Params: qfnxC, 57
+                                                                    Returns: qfnxGtR
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.WOr
+                                                                    Params: qfnxLtR, qfnxGtR
+                                                                    Returns: qfnxNotR
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Ctrl.Call
+                                                                    Params: sir_const_bool, qfnxNotR
+                                                                    Returns: qfnxNot
+                                                                Branch
+                                                                    Condition: qfnxNot
+                                                                    TrueBlock
+                                                                        Instruction
+                                                                            Type: Instruction
+                                                                            Role: Content
+                                                                            Op: IR.WLit
+                                                                            Params: 1
+                                                                            Returns: qfbrk
+                                                                    FalseBlock
+                                                                        Instruction
+                                                                            Type: Instruction
+                                                                            Role: Content
+                                                                            Op: IR.WAdd
+                                                                            Params: qk, 1
+                                                                            Returns: qk
+                                                            FalseBlock
+                                                                 Instruction
+                                                                     Type: Instruction
+                                                                     Role: Content
+                                                                     Op: IR.WLit
+                                                                     Params: 1
+                                                                     Returns: qfbrk
+                                                    FalseBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: IR.WLit
+                                                            Params: 1
+                                                            Returns: qfbrk
+                                            FalseBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WMul
+                                                    Params: qfrac, 10
+                                                    Returns: qft1
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WSub
+                                                    Params: qfc, 48
+                                                    Returns: qfdd
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WAdd
+                                                    Params: qft1, qfdd
+                                                    Returns: qfrac
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WAdd
+                                                    Params: qfracL, 1
+                                                    Returns: qfracL
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WAdd
+                                                    Params: qk, 1
+                                                    Returns: qk
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLtS
+                                    Params: qk, qslen
+                                    Returns: qfr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WNot
+                                    Params: qfbrk
+                                    Returns: qnfbrk
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAnd
+                                    Params: qfr, qnfbrk
+                                    Returns: qfr2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, qfr2
+                                    Returns: qfdig
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: qk
+                            Returns: qk
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: qk
+                    Returns: qk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: qk, qslen
+            Returns: qeInR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qeInR
+            Returns: qeIn
+        Branch
+            Condition: qeIn
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: qsptr, qk
+                    Returns: qeA
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: qeA, 1
+                    Returns: qeC
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: qeC, 101
+                    Returns: qe1R
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: qeC, 69
+                    Returns: qe2R
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WOr
+                    Params: qe1R, qe2R
+                    Returns: qeR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qeR
+                    Returns: qeE
+                Branch
+                    Condition: qeE
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 1
+                            Returns: qexpS
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: qk, 1
+                            Returns: qk
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLtS
+                            Params: qk, qslen
+                            Returns: qesInR
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, qesInR
+                            Returns: qesIn
+                        Branch
+                            Condition: qesIn
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: qsptr, qk
+                                    Returns: qesA
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.Load
+                                    Params: qesA, 1
+                                    Returns: qesC
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WEq
+                                    Params: qesC, 45
+                                    Returns: qesMinR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, qesMinR
+                                    Returns: qesMin
+                                Branch
+                                    Condition: qesMin
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WLit
+                                            Params: 1
+                                            Returns: qexpN
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WAdd
+                                            Params: qk, 1
+                                            Returns: qk
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WEq
+                                            Params: qesC, 43
+                                            Returns: qesPlusR
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_const_bool, qesPlusR
+                                            Returns: qesPlus
+                                        Branch
+                                            Condition: qesPlus
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WAdd
+                                                    Params: qk, 1
+                                                    Returns: qk
+                                            FalseBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Id
+                                                    Params: qk
+                                                    Returns: qk
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Id
+                                    Params: qk
+                                    Returns: qk
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 0
+                            Returns: qexpD
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLtS
+                            Params: qk, qslen
+                            Returns: qedr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: sir_const_bool, qedr
+                            Returns: qedig
+                        Loop
+                            Condition: qedig
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAdd
+                                    Params: qsptr, qk
+                                    Returns: qedaddr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.Load
+                                    Params: qedaddr, 1
+                                    Returns: qedc
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLtU
+                                    Params: qedc, 48
+                                    Returns: qedltR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WGtU
+                                    Params: qedc, 57
+                                    Returns: qedgtR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WOr
+                                    Params: qedltR, qedgtR
+                                    Returns: qednotR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WEq
+                                    Params: qedc, 95
+                                    Returns: qedskR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WNot
+                                    Params: qedskR
+                                    Returns: qenskR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAnd
+                                    Params: qednotR, qenskR
+                                    Returns: qednotR2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, qednotR2
+                                    Returns: qednot
+                                Branch
+                                    Condition: qednot
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WLit
+                                            Params: 1
+                                            Returns: qebrk
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WEq
+                                            Params: qedc, 95
+                                            Returns: qeuR
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: sir_const_bool, qeuR
+                                            Returns: qeu
+                                        Branch
+                                            Condition: qeu
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: IR.WGtS
+                                                    Params: qexpD, 0
+                                                    Returns: qeHasR
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: sir_const_bool, qeHasR
+                                                    Returns: qeHas
+                                                Branch
+                                                    Condition: qeHas
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: IR.WAdd
+                                                            Params: qk, 1
+                                                            Returns: qenx
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: IR.WLtS
+                                                            Params: qenx, qslen
+                                                            Returns: qenxInR
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Ctrl.Call
+                                                            Params: sir_const_bool, qenxInR
+                                                            Returns: qenxIn
+                                                        Branch
+                                                            Condition: qenxIn
+                                                            TrueBlock
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.WAdd
+                                                                    Params: qsptr, qenx
+                                                                    Returns: qenxA
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.Load
+                                                                    Params: qenxA, 1
+                                                                    Returns: qenxC
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.WLtU
+                                                                    Params: qenxC, 48
+                                                                    Returns: qenxLtR
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.WGtU
+                                                                    Params: qenxC, 57
+                                                                    Returns: qenxGtR
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: IR.WOr
+                                                                    Params: qenxLtR, qenxGtR
+                                                                    Returns: qenxNotR
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Ctrl.Call
+                                                                    Params: sir_const_bool, qenxNotR
+                                                                    Returns: qenxNot
+                                                                Branch
+                                                                    Condition: qenxNot
+                                                                    TrueBlock
+                                                                        Instruction
+                                                                            Type: Instruction
+                                                                            Role: Content
+                                                                            Op: IR.WLit
+                                                                            Params: 1
+                                                                            Returns: qebrk
+                                                                    FalseBlock
+                                                                        Instruction
+                                                                            Type: Instruction
+                                                                            Role: Content
+                                                                            Op: IR.WAdd
+                                                                            Params: qk, 1
+                                                                            Returns: qk
+                                                            FalseBlock
+                                                                 Instruction
+                                                                     Type: Instruction
+                                                                     Role: Content
+                                                                     Op: IR.WLit
+                                                                     Params: 1
+                                                                     Returns: qebrk
+                                                    FalseBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: IR.WLit
+                                                            Params: 1
+                                                            Returns: qebrk
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WMul
+                                            Params: qexpV, 10
+                                            Returns: qet1
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WSub
+                                            Params: qedc, 48
+                                            Returns: qedd
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WAdd
+                                            Params: qet1, qedd
+                                            Returns: qexpV
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WAdd
+                                            Params: qexpD, 1
+                                            Returns: qexpD
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: IR.WAdd
+                                            Params: qk, 1
+                                            Returns: qk
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WLtS
+                                    Params: qk, qslen
+                                    Returns: qedr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WNot
+                                    Params: qebrk
+                                    Returns: qnebrk
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: IR.WAnd
+                                    Params: qedr, qnebrk
+                                    Returns: qedr2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: sir_const_bool, qedr2
+                                    Returns: qedig
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: qk
+                            Returns: qk
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: qk
+                    Returns: qk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qtwbrk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: qk, qslen
+            Returns: qtwr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qtwr
+            Returns: qtwc
+        Loop
+            Condition: qtwc
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: qsptr, qk
+                    Returns: qtwaddr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: qtwaddr, 1
+                    Returns: qtwc2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: qtwc2, 32
+                    Returns: qtwSpR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: qtwc2, 9
+                    Returns: qtwTabR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WOr
+                    Params: qtwSpR, qtwTabR
+                    Returns: qtwWsR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qtwWsR
+                    Returns: qtwWs
+                Branch
+                    Condition: qtwWs
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WAdd
+                            Params: qk, 1
+                            Returns: qk
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.WLit
+                            Params: 1
+                            Returns: qtwbrk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: qk, qslen
+                    Returns: qtwr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WNot
+                    Params: qtwbrk
+                    Returns: qntwbrk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAnd
+                    Params: qtwr, qntwbrk
+                    Returns: qtwr2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qtwr2
+                    Returns: qtwc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: qk, qslen
+            Returns: qfullR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qfullR
+            Returns: qfull
+        Branch
+            Condition: qfull
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Trap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: qintD, qfracL
+            Returns: qdigTot
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WGtS
+            Params: qdigTot, 0
+            Returns: qdigOkR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qdigOkR
+            Returns: qdigOk
+        Branch
+            Condition: qdigOk
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Trap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WOr
+            Params: qdot, qexpS
+            Returns: qdeR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qdeR
+            Returns: qde
+        Branch
+            Condition: qde
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Trap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qexpS
+            Returns: qexpSB
+        Branch
+            Condition: qexpSB
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WGtS
+                    Params: qexpD, 0
+                    Returns: qexpOkR
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qexpOkR
+                    Returns: qexpOk
+                Branch
+                    Condition: qexpOk
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Trap
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: qk
+                    Returns: qk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64FromI64
+            Params: qtenI
+            Returns: qten
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64FromI64
+            Params: qintpart
+            Returns: qfi
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64FromI64
+            Params: qfrac
+            Returns: qff
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 1
+            Returns: qoneI
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64FromI64
+            Params: qoneI
+            Returns: qscale
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qe
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: qe, qfracL
+            Returns: qesr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qesr
+            Returns: qescale
+        Loop
+            Condition: qescale
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.F64Mul
+                    Params: qscale, qten
+                    Returns: qscale
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: qe, 1
+                    Returns: qe
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: qe, qfracL
+                    Returns: qesr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qesr
+                    Returns: qescale
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64Div
+            Params: qff, qscale
+            Returns: qfracV
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64Add
+            Params: qfi, qfracV
+            Returns: qmant
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: qx, qexpV
+            Returns: qexr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qexr
+            Returns: qexloop
+        Loop
+            Condition: qexloop
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qexpN
+                    Returns: qexpNB
+                Branch
+                    Condition: qexpNB
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.F64Div
+                            Params: qmant, qten
+                            Returns: qmant
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.F64Mul
+                            Params: qmant, qten
+                            Returns: qmant
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: qx, 1
+                    Returns: qx
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLtS
+                    Params: qx, qexpV
+                    Returns: qexr
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, qexr
+                    Returns: qexloop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 0
+            Returns: qzeroI
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.F64FromI64
+            Params: qzeroI
+            Returns: qzero
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, qneg
+            Returns: qnegB
+        Branch
+            Condition: qnegB
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: -1
+                    Returns: qnegI
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.F64FromI64
+                    Params: qnegI
+                    Returns: qnegone
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.F64Mul
+                    Params: qmant, qnegone
+                    Returns: qfin
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: qmant
+                    Returns: qfin
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_f64, qfin
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

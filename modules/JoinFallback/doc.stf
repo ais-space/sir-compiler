@@ -1,0 +1,7 @@
+JoinFallbackModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Reachability (FwdReach) and heuristic fallback join (FallbackJoin).
+    Provides: FwdReach(state, tb) / FallbackJoin(state, term).
+    DependsOn: NextInOrder (order walk), InList, Converge (post-dominator chains).

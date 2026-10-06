@@ -1,0 +1,8 @@
+SplitArgsModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Splits the Params string on comma (Core.Chr 44): null or empty string → empty list (otherwise StrSplit("") produced a single empty token and parameter counters shifted); non-empty — token list.
+    Provides: SplitArgs(pstr) -> parts.
+    DependsOn: none (leaf with no dependencies on other modules)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../SplitArgs/SplitArgs.sir).

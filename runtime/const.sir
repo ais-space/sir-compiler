@@ -1,0 +1,322 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR runtime - value constructors (Foundation 2)
+    Capabilities: IR
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_const_i64
+        Params: v
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 256
+            Returns: c256
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtU
+            Params: v, c256
+            Returns: inRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, inRaw
+            Returns: inR
+        Branch
+            Condition: inR
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 16
+                    Returns: c16t
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WMul
+                    Params: v, c16t
+                    Returns: voff
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 32
+                    Returns: c32t
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: voff, c32t
+                    Returns: vrel
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.GlobalGet
+                    Params: 3
+                    Returns: ibase
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: ibase, vrel
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 16
+                    Returns: c16
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: alloc, c16
+                    Returns: p
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: p, 0, 4
+                    Returns: w1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WAdd
+                    Params: p, 8
+                    Returns: p8
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Store
+                    Params: p8, v, 8
+                    Returns: w2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: p
+                    Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_const_bool
+        Params: v
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: v, 0
+            Returns: ez
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 1
+            Returns: c1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WSub
+            Params: c1, ez
+            Returns: idx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 16
+            Returns: c16
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: idx, c16
+            Returns: moff
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalGet
+            Params: 3
+            Returns: bbase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: bbase, moff
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_const_null
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 16
+            Returns: c16
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc, c16
+            Returns: p
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: p, 5, 4
+            Returns: w1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: p
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_const_err
+        Params: s
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: s, 8
+            Returns: s8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: s8, 8
+            Returns: st
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 16
+            Returns: c16
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc, c16
+            Returns: val
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: val, 7, 4
+            Returns: w1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: val, 8
+            Returns: v8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: v8, st, 8
+            Returns: w2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: val
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_const_f64
+        Params: bits
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 16
+            Returns: c16
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: alloc, c16
+            Returns: p
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: p, 6, 4
+            Returns: w1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: p, 8
+            Returns: p8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: p8, bits, 8
+            Returns: w2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: p
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

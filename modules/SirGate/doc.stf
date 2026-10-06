@@ -1,0 +1,6 @@
+SirGateModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: SIR version gate (§2.5 newer-only refusal). SirSupported() returns the supported contract (major 0, minor 11, SIR 0.11.1, compiler 0.2.2). SirGate(src) scans the source for a depth-zero Context DocumentVersion claim: covered versions pass the source through byte-identical; newer, malformed, or missing declarations print a loud diagnostic via Sys.Output and return a self-describing refusal stub program (which prints the diagnostic when run) so no binary is ever emitted from an unclaimed source.
+    Provides: SirSupported() -> version map; SirGate(src) -> gated source text; SirRefusal(msg) -> refusal program text.

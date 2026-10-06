@@ -1,0 +1,133 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: HasForbidden (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: HasForbidden
+        Params: op
+        Returns: bad
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: toks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: toks, "i32"
+            Returns: toks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: toks, "i64"
+            Returns: toks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: toks, "f32"
+            Returns: toks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: toks, "f64"
+            Returns: toks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: toks, "wasm"
+            Returns: toks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: toks, "register"
+            Returns: toks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: toks, "stack"
+            Returns: toks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: toks
+            Returns: tk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: ti
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: bad
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: ti, tk
+            Returns: tic
+        Loop
+            Condition: tic
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: toks, ti
+                    Returns: tk2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrFind
+                    Params: op, tk2, 0
+                    Returns: pos
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Ge
+                    Params: pos, 0
+                    Returns: found
+                Branch
+                    Condition: found
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 1
+                            Returns: bad
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: ti, 1
+                    Returns: ti
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: ti, tk
+                    Returns: tic
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: bad

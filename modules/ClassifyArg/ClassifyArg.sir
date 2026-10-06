@@ -1,0 +1,211 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ClassifyArg (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ClassifyArg
+        Params: token
+        Returns: operand
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrLen
+            Params: token
+            Returns: tl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: tl, 1
+            Returns: tle
+        Branch
+            Condition: tle
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Returns: operand
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: operand, "kind", "null"
+                    Returns: operand
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: operand, "val", ""
+                    Returns: operand
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Chr
+                    Params: 34
+                    Returns: q
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrSub
+                    Params: token, 0, 1
+                    Returns: fc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: fc, q
+                    Returns: isQ
+                Branch
+                    Condition: isQ
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Sub
+                            Params: tl, 2
+                            Returns: innerLen
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.StrSub
+                            Params: token, 1, innerLen
+                            Returns: inner
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Map
+                            Returns: operand
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: operand, "kind", "const"
+                            Returns: operand
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: operand, "val", inner
+                            Returns: operand
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: token, "null"
+                            Returns: isNullTok
+                        Branch
+                            Condition: isNullTok
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Map
+                                    Returns: operand
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSet
+                                    Params: operand, "kind", "null"
+                                    Returns: operand
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSet
+                                    Params: operand, "val", ""
+                                    Returns: operand
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrParse
+                                    Params: token
+                                    Returns: parsed
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.TypeOf
+                                    Params: parsed
+                                    Returns: t
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: t, "int"
+                                    Returns: isInt
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: t, "float"
+                                    Returns: isFloat
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: t, "bool"
+                                    Returns: isBool
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: isInt, isFloat
+                                    Returns: a
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: a, isBool
+                                    Returns: isC
+                                Branch
+                                    Condition: isC
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Map
+                                            Returns: operand
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: operand, "kind", "const"
+                                            Returns: operand
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: operand, "val", parsed
+                                            Returns: operand
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Map
+                                            Returns: operand
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: operand, "kind", "ref"
+                                            Returns: operand
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: operand, "val", token
+                                            Returns: operand
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: operand

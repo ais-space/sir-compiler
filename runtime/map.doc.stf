@@ -1,0 +1,9 @@
+mapModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Persistent open-addressing string/int-keyed maps.
+    Provides: sir_map_make() -> out Empty map.
+    Provides: sir_map_get(m, key) -> out Lookup (miss → null).
+    Provides: sir_map_set(m, key, val) -> out Functional upsert (clone).
+    Provides: sir_map_keys(m) -> out Chunked key list (P-250: built via append, never flat).

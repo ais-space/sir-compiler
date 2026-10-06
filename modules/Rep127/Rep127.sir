@@ -1,0 +1,54 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: Rep127 (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: Rep127
+        Params: n
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Gt
+            Params: n, 0
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: res, 126
+                    Returns: res
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Sub
+                    Params: n, 1
+                    Returns: n
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Gt
+                    Params: n, 0
+                    Returns: cont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

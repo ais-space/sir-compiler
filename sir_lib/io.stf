@@ -1,0 +1,140 @@
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR Standard Library - IO
+
+    Function
+        Name: ReadLine
+        Params: channel
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Sys.Input
+            Params: channel
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Print
+        Params: v
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Sys.Output
+            Params: v
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: null
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: PrintLn
+        Params: v
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Sys.Output
+            Params: v
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: null
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: WriteLines
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: list
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: list, i
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Sys.Output
+                    Params: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: null
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: sir_log
+        Params: msg
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: null
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

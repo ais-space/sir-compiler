@@ -1,0 +1,719 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitBranchJoin — non-loop Branch emission (isLoop=false)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitBranchJoin
+        Params: state, b, term, join
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "labels"
+            Returns: labels
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: join
+            Returns: lj
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: labels, lj
+            Returns: labels2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: state, "labels", labels2
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "true"
+            Returns: jtb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "false"
+            Returns: jfb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "bm"
+            Returns: jbm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: jbm, jtb
+            Returns: jblk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: jblk, "term"
+            Returns: jtm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: jtm, "op"
+            Returns: jop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: jop, "Return"
+            Returns: jtdiv
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: jbm, jfb
+            Returns: jfblk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: jfblk, "term"
+            Returns: jftm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: jftm, "op"
+            Returns: jfop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: jfop, "Return"
+            Returns: jfdiv
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: jone
+        Branch
+            Condition: jtdiv
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: jone
+                    Returns: jbothDiv
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: jfdiv
+                    Returns: jbothDiv
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "bm"
+            Returns: ubm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "labels"
+            Returns: ulabs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "true"
+            Returns: utb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "false"
+            Returns: ufb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ubm, utb
+            Returns: utblk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: utblk, "term"
+            Returns: uttm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: uttm, "op"
+            Returns: utop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: utop, "Return"
+            Returns: utret
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: utop, "Jump"
+            Returns: utjmp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: uttm, "target"
+            Returns: uttgt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: uttgt, null
+            Returns: utnull
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: utnull
+            Returns: utok0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: utjmp, utok0
+            Returns: utok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: utjret
+        Branch
+            Condition: utok
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: FindDepth, ulabs, uttgt
+                    Returns: utdep
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: utdep, -1
+                    Returns: utnf
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: ubm, uttgt
+                    Returns: utgt
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: utgt, null
+                    Returns: utgn
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Not
+                    Params: utgn
+                    Returns: utgo
+                Branch
+                    Condition: utgo
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: utgt, "term"
+                            Returns: utgtm
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: utgtm, "op"
+                            Returns: utgop2
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: utgop2, "Return"
+                            Returns: utjret
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: utret, utjret
+            Returns: utdead
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ubm, ufb
+            Returns: ufblk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ufblk, "term"
+            Returns: uftm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: uftm, "op"
+            Returns: ufop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: ufop, "Return"
+            Returns: ufret
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: ufop, "Jump"
+            Returns: ufjmp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: uftm, "target"
+            Returns: uftgt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: uftgt, null
+            Returns: uftnull
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: uftnull
+            Returns: ufok0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: ufjmp, ufok0
+            Returns: ufok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: ufjret
+        Branch
+            Condition: ufok
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: FindDepth, ulabs, uftgt
+                    Returns: ufdep
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: ufdep, -1
+                    Returns: ufnf
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: ubm, uftgt
+                    Returns: ufgt
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: ufgt, null
+                    Returns: ufgn
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Not
+                    Params: ufgn
+                    Returns: ufgo
+                Branch
+                    Condition: ufgo
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: ufgt, "term"
+                            Returns: ufgtm
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: ufgtm, "op"
+                            Returns: ufgop2
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: ufgop2, "Return"
+                            Returns: ufjret
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: ufret, ufjret
+            Returns: ufdead
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: utdead, ufdead
+            Returns: ujhas
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: ujhas
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: join, null
+            Returns: flat
+        Branch
+            Condition: flat
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 2
+                    Returns: state
+                Branch
+                    Condition: ujhas
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: Push, state, 126
+                            Returns: state
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: Push, state, 64
+                            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: b, "instrs"
+            Returns: instrs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitInstrs, state, instrs
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "cond"
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitCond, state, cond
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 4
+            Returns: state
+        Branch
+            Condition: ujhas
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 126
+                    Returns: state
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 64
+                    Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "true"
+            Returns: tb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitBlock, state, tb
+            Returns: state
+        Branch
+            Condition: flat
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 12
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 0
+                    Returns: l0
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushList, state, l0
+                    Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 5
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "false"
+            Returns: fb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitBlock, state, fb
+            Returns: state
+        Branch
+            Condition: flat
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 12
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushList, state, l0
+                    Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 11
+            Returns: state
+        Branch
+            Condition: flat
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 11
+                    Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "labels"
+            Returns: labels
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: labels
+            Returns: ll
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sub
+            Params: ll, 1
+            Returns: keep
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: j
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: newlabels
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: j, keep
+            Returns: lc
+        Loop
+            Condition: lc
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: labels, j
+                    Returns: x
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: newlabels, x
+                    Returns: newlabels
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: j, 1
+                    Returns: j
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: j, keep
+                    Returns: lc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: state, "labels", newlabels
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "emitted"
+            Returns: uem
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: uem
+            Returns: uemn
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: uk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: unew
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: uk, uemn
+            Returns: ukc
+        Loop
+            Condition: ukc
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: uem, uk
+                    Returns: ux
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: ux, join
+                    Returns: uisj
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Not
+                    Params: uisj
+                    Returns: ukeep
+                Branch
+                    Condition: ukeep
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: unew, ux
+                            Returns: unew
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: uk, 1
+                    Returns: uk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: uk, uemn
+                    Returns: ukc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: state, "emitted", unew
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitBlock, state, join
+            Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

@@ -1,0 +1,7 @@
+typeModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Type introspection.
+    Provides: sir_typeof(box) -> out Type name string.
+    Provides: sir_is_list(x) -> out 1 if list, else 0.

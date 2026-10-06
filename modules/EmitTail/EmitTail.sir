@@ -1,0 +1,170 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitTail (atomized module)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitTail
+        Params: open, tail, blocks, openIdx
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: blocks, openIdx
+            Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: tail, "kind"
+            Returns: tailKind
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: tailKind, "jump"
+            Returns: isJump
+        Branch
+            Condition: isJump
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Returns: term
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: term, "op", "Jump"
+                    Returns: term
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: tail, "target"
+                    Returns: tgt
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: term, "target", tgt
+                    Returns: term
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: open, "term", term
+                    Returns: open
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Returns: term
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: term, "op", "Return"
+                    Returns: term
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: tail, "var"
+                    Returns: rv
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Returns: valOp
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrLen
+                    Params: rv
+                    Returns: rvLen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: rvLen, 0
+                    Returns: rvEmpty
+                Branch
+                    Condition: rvEmpty
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: valOp, "kind", "null"
+                            Returns: valOp
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: valOp, "val", ""
+                            Returns: valOp
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: valOp, "kind", "ref"
+                            Returns: valOp
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: valOp, "val", rv
+                            Returns: valOp
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: term, "val", valOp
+                    Returns: term
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: open, "term", term
+                    Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListSet
+            Params: blocks, openIdx, open
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: 
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: res, "open", open
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: res, "blocks", blocks
+            Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

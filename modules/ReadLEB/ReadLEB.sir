@@ -1,0 +1,120 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ReadLEB (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ReadLEB
+        Params: data, pos
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: result
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: shift
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: data, pos
+            Returns: b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: pos, 1
+            Returns: pos
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.BitAnd
+            Params: b, 127
+            Returns: low
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ShiftL
+            Params: low, shift
+            Returns: lowS
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.BitOr
+            Params: result, lowS
+            Returns: result
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.BitAnd
+            Params: b, 128
+            Returns: more
+        Loop
+            Condition: more
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: shift, 7
+                    Returns: shift
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: data, pos
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: pos, 1
+                    Returns: pos
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.BitAnd
+                    Params: b, 127
+                    Returns: low
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ShiftL
+                    Params: low, shift
+                    Returns: lowS
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.BitOr
+                    Params: result, lowS
+                    Returns: result
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.BitAnd
+                    Params: b, 128
+                    Returns: more
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: result, pos
+            Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

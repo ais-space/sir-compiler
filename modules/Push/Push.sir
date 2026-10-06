@@ -1,0 +1,39 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: Push (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: Push
+        Params: state, x
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "out"
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: out, x
+            Returns: out2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: state, "out", out2
+            Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

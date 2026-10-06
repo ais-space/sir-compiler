@@ -1,0 +1,11 @@
+ParseDataSegmentsModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Parses data segments (section 11) from a binary wasm: extracts (offset, bytes) pairs — the runtime's own string literals (e.g. error messages) that must be preserved in the output module when compiling a user program against this runtime.
+    Provides
+        Item: ParseDataSegments(data) -> List<Map{"off":int,"bytes":List}> — section-11 segments.
+        Item: DataBaseOf(datas) -> int — upper bound of occupied offsets (max(off+len)); start offset for user literals.
+    DependsOn: ReadLEB (unsigned sizes/indices), ReadSignedLEB (signed offset expressions).
+    Composition: Native include from modules/GenWasm/GenWasm.sir; called BEFORE ParseWasm (ParseWasm overwrites the raw rt bytes with the parsed map), the result is passed to EmitDataSection together with DataBaseOf.
+    Notes: Stage D. Before this step the output data section contained only user literals, and the runtime's own strings (sir_const_err "division by zero") were lost. data_base is computed from the parsed segments. Byte gate: runtimes without a data section produce output identical to before (empty list → counter and base unchanged).

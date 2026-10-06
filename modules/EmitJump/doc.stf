@@ -1,0 +1,25 @@
+EmitJumpModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: EmitJump — Jump-block emission
+
+    Function
+        Name: EmitJump
+        Params: state, b, term
+        Returns: state
+
+    DependsOn
+        EmitInstrs, EmitBlock
+
+    Reads
+        b["instrs"], term["target"], state["labels"]
+
+    Writes
+        state["out"], state["labels"]
+
+    Behavior
+        Emits the block instructions, then either br with computed depth or recursive EmitBlock(target)
+
+    Notes
+        Matches the Jump handler in emit_block

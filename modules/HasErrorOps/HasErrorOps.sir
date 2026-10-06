@@ -1,0 +1,273 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: HasErrorOps (atomized module, Stage D)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: HasErrorOps
+        Params: func
+        Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: func, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: blocks
+            Returns: nb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: bi
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: bi, nb
+            Returns: contb
+        Loop
+            Condition: contb
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: blocks, bi
+                    Returns: blk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: blk, "instrs"
+                    Returns: instrs
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: instrs
+                    Returns: ni
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 0
+                    Returns: ii
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: ii, ni
+                    Returns: conti
+                Loop
+                    Condition: conti
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: instrs, ii
+                            Returns: ins
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: ins, "op"
+                            Returns: op
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "IR.ReadFile"
+                            Returns: isStore
+                        Branch
+                            Condition: isStore
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: found
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "IR.Div"
+                            Returns: isDivOp
+                        Branch
+                            Condition: isDivOp
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: found
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "IR.Mod"
+                            Returns: isModOp
+                        Branch
+                            Condition: isModOp
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: found
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "IR.ListPop"
+                            Returns: isPopOp
+                        Branch
+                            Condition: isPopOp
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: found
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "IR.Call"
+                            Returns: isCall
+                        Branch
+                            Condition: isCall
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: ins, "args"
+                                    Returns: args
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: args, 0
+                                    Returns: a0
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: a0, "kind"
+                                    Returns: kind
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: kind, "const"
+                                    Returns: isConst
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: a0, "val"
+                                    Returns: val
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: val, "sir_div"
+                                    Returns: isDiv
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: val, "sir_mod"
+                                    Returns: isMod
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: val, "sir_list_pop"
+                                    Returns: isPop
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: isDiv, isMod
+                                    Returns: isErrH
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: isErrH, isPop
+                                    Returns: isErrH2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.And
+                                    Params: isConst, isErrH2
+                                    Returns: isErrCall
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.And
+                                    Params: isCall, isErrCall
+                                    Returns: hit
+                                Branch
+                                    Condition: hit
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: found
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Add
+                            Params: ii, 1
+                            Returns: ii
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: ii, ni
+                            Returns: conti
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: bi, 1
+                    Returns: bi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: bi, nb
+                    Returns: contb
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: found

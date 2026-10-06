@@ -1,0 +1,9 @@
+FlattenModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Flattens a nested list of lists into a flat byte list. Assembly utility for the final module from the section list.
+    Provides: Flatten(lists) -> res. lists — byte-list list; returns one flat list.
+    DependsOn: none (leaf; Core.ListGet/ListLen/ListConcat, Loop).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../Flatten/Flatten.sir).
+    Notes: used in GenWasm to assemble the final module from the ready-section list.

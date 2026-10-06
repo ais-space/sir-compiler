@@ -1,0 +1,9 @@
+EmitOperandModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Encodes a single IR operand (ref/const/null) into WASM bytes and appends them to state["out"]. Central operand-emission node for instructions and terminators.
+    Provides: EmitOperand(state, opnd) -> state; EmitOperandRaw(state, opnd) -> state (added in Foundation2). opnd — map {"kind","val"}; kind in {"ref","const","null"}, otherwise treated as ref; returns state with appended bytes.
+    DependsOn: Push (byte writes), EmitU32LEB (U32 LEB for indexes/arguments), EmitSignedLEB (signed LEB for constants), PushList (append); reads state["v2l"] (variable-to-local-index).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitOperand/EmitOperand.sir).
+    Notes (single i64-ABI): ref→0x20(local.get)+U32LEB(v2l); const→0x42(i64.const)+signedLEB(val)+0x10(call 5 sir_const_i64); null→0x10(call 7 sir_const_null). Indexes canonical for N_IMPORTS=4 (Stage D). Sister EmitOperandRaw(state, opnd): NO boxing of constants (raw i64.const / local.get) — for the runtime raw domain (addresses, counters, alloc sizes).

@@ -1,0 +1,88 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: LowerArgs (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: LowerArgs
+        Params: pstr
+        Returns: args
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: SplitArgs, pstr
+            Returns: raws
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: raws
+            Returns: n
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: args
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: raws, i
+                    Returns: tok
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrTrim
+                    Params: tok
+                    Returns: tk
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: ClassifyArg, tk
+                    Returns: opnd
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: args, opnd
+                    Returns: args
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: args

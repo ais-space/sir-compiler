@@ -1,0 +1,8 @@
+EmitInstructionModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emission of a single IR instruction (via LowerInstr) into the currently open block.
+    Provides: EmitInstruction(node, blocks, openIdx) -> blocks.
+    DependsOn: LowerInstr (via Include)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../EmitInstruction/EmitInstruction.sir).

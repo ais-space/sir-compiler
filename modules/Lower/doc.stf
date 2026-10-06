@@ -1,0 +1,8 @@
+LowerModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Main AST-to-IR lowering driver: descends under the root (Module/Root), iterates Function nodes and lowers each via LowerFunc, returning the IR tree (functions + entry + types). Single responsibility is lowering orchestration.
+    Provides: Lower(ast) -> ir.
+    DependsOn: none (leaf with no dependencies on other modules)
+    Composition: Native include from modules/Compiler/Compiler.sir (Path: ../Lower/Lower.sir).

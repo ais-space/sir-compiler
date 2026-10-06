@@ -1,0 +1,421 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ParseLines (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ParseLines
+        Params: source
+        Returns: pl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 2
+            Returns: attrTwo
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalGet
+            Params: 2
+            Returns: attrSaved
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalSet
+            Params: 2, attrTwo
+            Returns: attrSet
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Chr
+            Params: 10
+            Returns: nl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrSplit
+            Params: source, nl
+            Returns: lines
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: lines
+            Returns: lineCount
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: nodeCount
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: records
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: stack
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: rootFrame
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSetMut
+            Params: rootFrame, "depth", -1
+            Returns: rootFrame
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSetMut
+            Params: rootFrame, "idx", 0
+            Returns: rootFrame
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPushMut
+            Params: stack, rootFrame
+            Returns: stack
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: true
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: lines, i
+                    Returns: line
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrLen
+                    Params: line
+                    Returns: lineLen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 0
+                    Returns: sp
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrSub
+                    Params: line, sp, 1
+                    Returns: ch
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: ch, " "
+                    Returns: isSpace
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrTrim
+                    Params: line
+                    Returns: trimmed
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrLen
+                    Params: trimmed
+                    Returns: trimmedLen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Sub
+                    Params: lineLen, trimmedLen
+                    Returns: sp
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: trimmedLen, 0
+                    Returns: isEmpty
+                Branch
+                    Condition: isEmpty
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: skip
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.IntDiv
+                            Params: sp, 4
+                            Returns: depth
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: PopWhile, stack, depth
+                            Returns: stack
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: TopIdx, stack
+                            Returns: parentIdx
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.StrFind
+                            Params: line, ":", 0
+                            Returns: colon
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: colon, 0
+                            Returns: noColon
+                        Branch
+                            Condition: noColon
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrTrim
+                                    Params: line
+                                    Returns: nm
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: nodeCount, 1
+                                    Returns: newIdx
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.List
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "kind", "node"
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "depth", depth
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "idx", newIdx
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "parent", parentIdx
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "name", nm
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListPushMut
+                                    Params: records, rec
+                                    Returns: records
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.List
+                                    Returns: frame
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: frame, "depth", depth
+                                    Returns: frame
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: frame, "idx", newIdx
+                                    Returns: frame
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListPushMut
+                                    Params: stack, frame
+                                    Returns: stack
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: newIdx
+                                    Returns: nodeCount
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrSub
+                                    Params: line, 0, colon
+                                    Returns: kraw
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrTrim
+                                    Params: kraw
+                                    Returns: ky
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Sub
+                                    Params: lineLen, colon
+                                    Returns: tmp
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Sub
+                                    Params: tmp, 1
+                                    Returns: vlen
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: colon, 1
+                                    Returns: c1
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrSub
+                                    Params: line, c1, vlen
+                                    Returns: vraw
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrTrim
+                                    Params: vraw
+                                    Returns: vl
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.List
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "kind", "prop"
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "depth", depth
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "idx", -1
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "parent", parentIdx
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "key", ky
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapSetMut
+                                    Params: rec, "val", vl
+                                    Returns: rec
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListPushMut
+                                    Params: records, rec
+                                    Returns: records
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: lines
+                    Returns: lineCount
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, lineCount
+                    Returns: cont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 
+            Returns: pl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPushMut
+            Params: pl, records
+            Returns: pl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPushMut
+            Params: pl, nodeCount
+            Returns: pl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.GlobalSet
+            Params: 2, attrSaved
+            Returns: attrRestored
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: pl

@@ -1,0 +1,8 @@
+EmitBranchModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emission of the Branch term plus recursive lowering of True/False branches into new blocks (via EmitChild).
+    Provides: EmitBranch(node, blocks, openIdx, counter) -> res.
+    DependsOn: EmitChild, NewOpen, FindChild, EmitSeq (via merged namespace)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../EmitBranch/EmitBranch.sir).

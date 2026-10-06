@@ -1,0 +1,143 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ValidateInstr (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ValidateInstr
+        Params: instr
+        Returns: ok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: instr, "op"
+            Returns: op
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrFind
+            Params: op, "IR.", 0
+            Returns: p
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Ge
+            Params: p, 0
+            Returns: hasPrefix
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: HasForbidden, op
+            Returns: bad
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: bad
+            Returns: clean
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: hasPrefix, clean
+            Returns: opOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: instr, "args"
+            Returns: args
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: args
+            Returns: at
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: at, "list"
+            Returns: argsIsList
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: args
+            Returns: al
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: ai
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: acc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: ai, al
+            Returns: ac
+        Loop
+            Condition: ac
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: args, ai
+                    Returns: a
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: ValidateOperand, a
+                    Returns: aok
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: acc, aok
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: ai, 1
+                    Returns: ai
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: ai, al
+                    Returns: ac
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: opOk, argsIsList
+            Returns: step
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: step, acc
+            Returns: ok
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ok

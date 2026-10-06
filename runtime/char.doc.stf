@@ -1,0 +1,7 @@
+charModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Char codecs between code points and one-char strings.
+    Provides: sir_chr(n) -> out Code point to one-char string.
+    Provides: sir_ord(s) -> out One-char string to code point.

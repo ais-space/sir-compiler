@@ -1,0 +1,9 @@
+EmitFuncBodyModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits a single function body: builds the block-map and var-map, collects variables, runs block emission (EmitBlock), and forms the local declaration (local count, or group [1, n, 127]).
+    Provides: EmitFuncBody(func, ufi, binMap, unMap, strMap, wbin, wcmp, wbit, helperIdx, tbase, tids) -> [body, tids] (signature extended by Foundation2 and R4). func — IR function; ufi — user-function map; binMap/unMap — binary/unary helper maps; tbase — trace scratch base (null without flag); tids — incoming trace-id list; returns the [body bytes, updated tids] pair (tids threads through the GenWasm loop).
+    DependsOn: BuildBlockMap, BuildVarMap, CollectVars, VarsMinus, EmitBlock.
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitFuncBody/EmitFuncBody.sir).
+    Notes: composes the emitter state (bm, order, emitted, labels, v2l, ufi, out, bin, un, strMap, wbin, wcmp, wbit, hidx, tbase, tids) and passes it to EmitBlock; local count = (all variables minus params) per the SIR compiler runtime contract.

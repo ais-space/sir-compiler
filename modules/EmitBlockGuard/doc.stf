@@ -1,0 +1,27 @@
+EmitBlockGuardModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: EmitBlockGuard — guard condition computation for EmitBlock
+
+    Function
+        Name: EmitBlockGuard
+        Params: state, bid
+        Returns: res (map with state, skip)
+
+    DependsOn
+        ComputeChains, InList
+
+    Reads
+        state["chains"], state["bm"], state["emitted"]
+
+    Writes
+        state["chains"] (if computed)
+
+    Behavior
+        Step 1: If state["chains"] == null, calls ComputeChains(state["bm"])
+        Step 2: Checks bid == null or bid in emitted
+        Step 3: Returns {state: updated_state, skip: bool}
+
+    Notes
+        Block emission steps 1-2 (guard computation)

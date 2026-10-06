@@ -1,0 +1,8 @@
+TopIdxModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Returns the idx field of the top stack frame (node index in the current block). Parser stack utility.
+    Provides: TopIdx(stack) -> idx.
+    DependsOn: none (leaf with no dependencies on other modules)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../TopIdx/TopIdx.sir).

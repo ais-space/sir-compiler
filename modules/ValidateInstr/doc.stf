@@ -1,0 +1,8 @@
+ValidateInstrModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Validates an IR instruction: op must carry the "IR." prefix and contain no forbidden tokens (HasForbidden), args — a list, each operand valid via ValidateOperand. Returns 1 on success.
+    Provides: ValidateInstr(instr) -> ok.
+    DependsOn: HasForbidden, ValidateOperand.
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../ValidateInstr/ValidateInstr.sir).

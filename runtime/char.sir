@@ -1,0 +1,110 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR runtime - char codecs
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_chr
+        Params: n
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 8
+            Returns: c8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: extra_traced_alloc, c8
+            Returns: buf
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: n, 8
+            Returns: np8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: np8, 8
+            Returns: nv
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: buf, nv, 1
+            Returns: w1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLit
+            Params: 1
+            Returns: c1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_str, buf, c1
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_ord
+        Params: s
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: s, 8
+            Returns: s8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: s8, 8
+            Returns: st
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: st, 4
+            Returns: st4
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: st4, 4
+            Returns: cp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: cp, 1
+            Returns: b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_i64, b
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

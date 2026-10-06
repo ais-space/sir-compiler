@@ -1,0 +1,9 @@
+PushAllModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Appends all list elements to the accumulator with a push loop (linear, amortized O(1) per element). Blessed idiom instead of quadratic ListConcat accumulation in a loop (Revizor catalog P-001 pattern; the concat-accum audit check points here).
+    Provides: PushAll(acc, xs) -> out. Returns the accumulator with all xs elements.
+    DependsOn: none (leaf; Core.ListPush in a loop).
+    Composition: Native include from modules/GenWasm/GenWasm.sir, modules/EmitDataSection/EmitDataSection.sir, modules/Flatten/Flatten.sir.
+    Notes: created during the B1-hang hunt (quadratic concat-accum cost 10h instead of minutes); mini/alloc stay byte-stable after the replacement.

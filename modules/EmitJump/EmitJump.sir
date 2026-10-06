@@ -1,0 +1,86 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitJump — Jump-block emission
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitJump
+        Params: state, b, term
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: b, "instrs"
+            Returns: instrs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitInstrs, state, instrs
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "target"
+            Returns: target
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "labels"
+            Returns: labels
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: FindDepth, labels, target
+            Returns: depth
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: depth, -1
+            Returns: notFound
+        Branch
+            Condition: notFound
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitBlock, state, target
+                    Returns: state
+        Branch
+            Condition: notFound
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 12
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: depth
+                    Returns: ld
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushList, state, ld
+                    Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

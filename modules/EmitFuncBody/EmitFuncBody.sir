@@ -1,0 +1,396 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitFuncBody (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitFuncBody
+        Params: func, ufi, binMap, unMap, strMap, wbin, wcmp, wbit, helperIdx, tbase, vbase, tids, tonly
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: func, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params:
+            Returns: m0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: o0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params:
+            Returns: vmi0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: BuildBlockMap, blocks, i0, m0, o0
+            Returns: bmr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: bmr, "m"
+            Returns: bm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: bmr, "o"
+            Returns: order
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: func, "params"
+            Returns: params
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: CollectVars, func
+            Returns: vars
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: VarsMinus, vars, params
+            Returns: vothers
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sort
+            Params: vothers
+            Returns: vsorted
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: params, vsorted
+            Returns: svars
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: HasErrorOps, func
+            Returns: errOn
+        Branch
+            Condition: errOn
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: "__err__slot"
+                    Returns: slotName
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: svars, slotName
+                    Returns: svars
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Ne
+            Params: vbase, null
+            Returns: tvOn
+        Branch
+            Condition: tvOn
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: "__traceval__slot"
+                    Returns: tvSlotName
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: svars, tvSlotName
+                    Returns: svars
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: BuildVarMap, svars, i0, vmi0
+            Returns: v2l
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: elist
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: llist
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: olist
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "bm", bm, "order", order, "emitted", elist, "labels", llist, "v2l", v2l, "ufi", ufi, "out", olist, "bin", binMap, "un", unMap, "strMap", strMap, "wbin", wbin, "wcmp", wcmp, "wbit", wbit, "hidx", helperIdx, "errOn", errOn, "tbase", tbase, "vbase", vbase, "tids", tids, "tonly", tonly
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: func, "entry"
+            Returns: entry
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: entry, null
+            Returns: en
+        Branch
+            Condition: en
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: order, 0
+                    Returns: entry
+        Branch
+            Condition: errOn
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 2
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 64
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "labels"
+                    Returns: labelsW
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: labelsW, "__err__"
+                    Returns: labelsW
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: state, "labels", labelsW
+                    Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitBlock, state, entry
+            Returns: state
+        Branch
+            Condition: errOn
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 11
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "v2l"
+                    Returns: v2lE
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: v2lE, "__err__slot"
+                    Returns: sidx
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 32
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, sidx
+                    Returns: sleb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushList, state, sleb
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 15
+                    Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "out"
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: VarsMinus, vars, params
+            Returns: others
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: others
+            Returns: on
+        Branch
+            Condition: errOn
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: on, 1
+                    Returns: on
+        Branch
+            Condition: tvOn
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: on, 1
+                    Returns: on
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: on, 0
+            Returns: noOthers
+        Branch
+            Condition: noOthers
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 0
+                    Returns: decls
+        Branch
+            Condition: noOthers
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 1
+                    Returns: deg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, on
+                    Returns: onL
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 126
+                    Returns: det
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: deg, onL
+                    Returns: d1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: d1, det
+                    Returns: decls
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: decls, out
+            Returns: bodyNoEnd
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 0
+            Returns: unrZero
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: unrZero, 11
+            Returns: endList
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: bodyNoEnd, endList
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: state, "tids"
+            Returns: tidsOut
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: res, tidsOut
+            Returns: pair
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: pair

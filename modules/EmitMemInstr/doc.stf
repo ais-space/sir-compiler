@@ -1,0 +1,9 @@
+EmitMemInstrModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits raw-memory and raw-domain instructions (Foundation 0a + Foundation2 extension): IR.Alloc (INT-size payload → i32, call alloc(2), result → INT Value via i64.extend_i32_u + sir_const_i64), IR.Load (address from INT payload → i32; cell load of Width in {1,2,4,8} bytes little-endian with zero-extension: load8_u/load16_u/load/i64.load; for Width≠8 — extend; wrap into INT Value), IR.Store (address and value from payload; store of low Width bytes of the value payload: store8/store16/store/i64.store).
+    Provides: EmitMemInstr(state, ins) -> state. thin dispatcher: PathOpen/FdClose hooks + EmitWasmMemCore/EmitWasiFileInstr/EmitRawIntInstr/EmitFloatInstr calls. Handles IR.Alloc/IR.Load/IR.Store, IR.GlobalGet/IR.GlobalSet, IR.FdWrite/IR.FdRead (Loop over args, call 0/1 + extend), the IR.W* family (raw i64: WAdd/WSub/WMul/WDivS/WDivU/WRemS/WRemU via state["wbin"]; WEq/WNe/WLtS/WGtS/WLeS/WGeS/WLtU/WGtU/WGeU via state["wcmp"] with extend 173; WAnd/WOr via state["wbit"] with wrap of both operands), IR.WNot (wrap+xor1+extend), IR.WLit (i64.const+EmitSignedLEB) — and writes state["done"]=1 ONLY when handled (never resets to 0 — EmitStringInstr, called earlier, does the reset).
+    DependsOn: Push, PushList, EmitU32LEB, EmitSignedLEB, EmitOperand, EmitOperandRaw; reads state["v2l"/"wbin"/"wcmp"/"wbit"], writes state["done"].
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitMemInstr/EmitMemInstr.sir); called from EmitInstr as the second instruction (after EmitStringInstr).
+    Notes: Emission of the IR.Alloc/IR.Load/IR.Store branches (opcodes: i64.load=0x29 align3 off8, i32.wrap_i64=0xA7, i64.extend_i32_u=0xAD, load8_u=0x2D, load16_u=0x2F, i32.load=0x28, store8=0x3A, store16=0x3E, i32.store=0x36, i64.store=0x37). Invalid Width is not detected (compile error propagates up) — covered by the release test set.

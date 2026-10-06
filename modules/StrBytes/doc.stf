@@ -1,0 +1,8 @@
+ModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Name: StrBytes
+    Purpose: Converts a string literal to a UTF-8 byte list (List int) for the data section. Byte-wise UTF-8 encoding. Used by CollectStr and GenWasm during data-segment emission.
+    Contract: StrBytes(str) -> [byte...]. Byte-wise UTF-8 encoding of the string.
+    DependsOn: Core.StrSub/Core.Ord/Core.StrLen (per-character extraction + character code).

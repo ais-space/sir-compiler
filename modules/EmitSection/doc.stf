@@ -1,0 +1,9 @@
+EmitSectionModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Forms a WASM section body: [id byte] + U32LEB(payload length) + payload. Universal constructor of all sections (type/function/export/code/...).
+    Provides: EmitSection(sid, payload) -> out. sid — Int (section id), payload — body byte list; returns the ready-section byte list.
+    DependsOn: EmitU32LEB (payload length encoding).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitSection/EmitSection.sir).
+    Notes: length counted over payload, not over the total — WASM standard.

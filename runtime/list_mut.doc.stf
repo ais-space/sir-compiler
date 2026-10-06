@@ -1,0 +1,7 @@
+list_mutModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: In-place list mutation (aliasing caller responsibility).
+    Provides: sir_list_push_mut(lst, val) -> out Push in place.
+    Provides: sir_list_set_mut(lst, idx, val) -> out Set in place.

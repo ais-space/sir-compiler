@@ -1,0 +1,9 @@
+LowerMemModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Mem.* lowering dispatcher by region kind (Foundation 0a): determines the IR op for a Mem instruction from the op name and the shape of the first argument. Mem.Alloc to IR.Alloc; Mem.Read with a "heap" string first argument (and arity 3) to IR.Load; Mem.Write with "heap" (arity 4) to IR.Store. Graph forms (default "graph" region) return the empty string — lowering stays as before (IR.Unknown).
+    Provides: LowerMemKind(op, args) -> out ("IR.Alloc" | "IR.Load" | "IR.Store" | ""). args are already-lowered LowerArgs operands ({kind,val}); the region is recognized as the "heap" string value.
+    DependsOn: Core.Eq/ListLen/ListGet/MapGet/TypeOf/And (pure Core ops).
+    Composition: Native include from modules/Compiler/Compiler.sir (Path: ../LowerMem/LowerMem.sir); called from LowerInstr for ops with the "Mem." prefix after args are computed; a non-empty result overrides irop (Core.Id).
+    Notes: Access width is passed as an OPERAND (1/2/4/8 literal) — i32/i64 suffixes in IR op names are forbidden by the HasForbidden validator. Buffer-operation semantics are defined in §6.6 of the SIR spec (sir_workbench).

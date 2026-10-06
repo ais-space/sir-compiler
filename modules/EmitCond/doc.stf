@@ -1,0 +1,9 @@
+EmitCondModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits the branch-condition evaluation prologue: from the condition operand (a local variable) generates the sequence computing the condition value per the SIR helper convention.
+    Provides: EmitCond(state, cond) -> state. cond — condition operand map (reads "val"); returns state with appended bytes.
+    DependsOn: Push (0x20 local.get), EmitU32LEB (index), PushList; reads state["v2l"].
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitCond/EmitCond.sir).
+    Notes: emitted opcodes: 0x20(local.get)+U32LEB(li), 0xA7(i32.wrap_i64), 0x41(i32.const)+LEB(8), 0x6A(i32.add), 0x28(i32.load align2 off0) — under i64-ABI locals hold the box pointer as i64, so wrap is mandatory before address arithmetic; the condition payload lives in cell +8.

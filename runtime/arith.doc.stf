@@ -1,0 +1,20 @@
+arithModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Boxed integer arithmetic and comparisons (two-domain: boxes in, boxes out).
+    Provides: sir_add(a, b) -> out Boxed addition.
+    Provides: sir_sub(a, b) -> out Boxed subtraction.
+    Provides: sir_mul(a, b) -> out Boxed multiplication.
+    Provides: sir_div(a, b) -> out Boxed truncating division (zero → Error).
+    Provides: sir_mod(a, b) -> out Boxed remainder (zero → Error).
+    Provides: sir_neg(a) -> out Boxed negation.
+    Provides: sir_equ(a, b) -> out Boxed equality.
+    Provides: sir_lt(a, b) -> out Boxed less-than.
+    Provides: sir_gt(a, b) -> out Boxed greater-than.
+    Provides: sir_le(a, b) -> out Boxed less-or-equal.
+    Provides: sir_ge(a, b) -> out Boxed greater-or-equal.
+    Provides: sir_ne(a, b) -> out Boxed not-equal.
+    Provides: sir_and(a, b) -> out Boxed boolean and.
+    Provides: sir_or(a, b) -> out Boxed boolean or.
+    Provides: sir_not(a) -> out Boxed boolean not.

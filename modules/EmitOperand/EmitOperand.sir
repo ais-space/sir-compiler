@@ -1,0 +1,605 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitOperand (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitOperand
+        Params: state, opnd
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: opnd, "kind"
+            Returns: kind
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: opnd, "val"
+            Returns: val
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: kind, "ref"
+            Returns: isRef
+        Branch
+            Condition: isRef
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "v2l"
+                    Returns: v2l
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: v2l, val
+                    Returns: li
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 32
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, li
+                    Returns: leb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushList, state, leb
+                    Returns: state
+        Branch
+            Condition: isRef
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: kind, "const"
+                    Returns: isConst
+                Branch
+                    Condition: isConst
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.TypeOf
+                            Params: val
+                            Returns: vt
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: vt, "str"
+                            Returns: isStr
+                        Branch
+                            Condition: isStr
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: state, "strMap"
+                                    Returns: sm
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: sm, val
+                                    Returns: dentry
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: dentry, 0
+                                    Returns: off
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: dentry, 1
+                                    Returns: sln
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Push, state, 66
+                                    Returns: state
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: EmitSignedLEB, off
+                                    Returns: leb
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: PushList, state, leb
+                                    Returns: state
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Push, state, 66
+                                    Returns: state
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: EmitSignedLEB, sln
+                                    Returns: leb
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: PushList, state, leb
+                                    Returns: state
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Push, state, 16
+                                    Returns: state
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: state, "hidx"
+                                    Returns: hxmap
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: hxmap, "sir_const_str"
+                                    Returns: hxidx
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: EmitU32LEB, hxidx
+                                    Returns: leb
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: PushList, state, leb
+                                    Returns: state
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: vt, "bool"
+                                    Returns: isBool
+                                Branch
+                                    Condition: isBool
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: Push, state, 66
+                                            Returns: state
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: EmitU32LEB, val
+                                            Returns: leb
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: PushList, state, leb
+                                            Returns: state
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: Push, state, 16
+                                            Returns: state
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: state, "hidx"
+                                            Returns: hxmap
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: hxmap, "sir_const_i64"
+                                            Returns: hxidx
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: EmitU32LEB, hxidx
+                                            Returns: leb
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: PushList, state, leb
+                                            Returns: state
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Eq
+                                            Params: vt, "float"
+                                            Returns: isFloat
+                                        Branch
+                                            Condition: isFloat
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.NumToStr
+                                                    Params: val
+                                                    Returns: ofs
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: state, "strMap"
+                                                    Returns: sm
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: sm, ofs
+                                                    Returns: ofdentry
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: ofdentry, 0
+                                                    Returns: ofoff
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: ofdentry, 1
+                                                    Returns: ofsln
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: Push, state, 66
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: EmitSignedLEB, ofoff
+                                                    Returns: ofleb
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: PushList, state, ofleb
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: Push, state, 66
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: EmitSignedLEB, ofsln
+                                                    Returns: ofleb2
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: PushList, state, ofleb2
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: Push, state, 16
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: state, "hidx"
+                                                    Returns: ofhxmap
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: ofhxmap, "sir_const_str"
+                                                    Returns: ofcidx
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: EmitU32LEB, ofcidx
+                                                    Returns: ofleb3
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: PushList, state, ofleb3
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: Push, state, 16
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: ofhxmap, "sir_str_parse"
+                                                    Returns: ofhxidx
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: EmitU32LEB, ofhxidx
+                                                    Returns: ofleb4
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: PushList, state, ofleb4
+                                                    Returns: state
+                                            FalseBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: Push, state, 66
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: EmitSignedLEB, val
+                                                    Returns: leb
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: PushList, state, leb
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: Push, state, 16
+                                                    Returns: state
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: state, "hidx"
+                                                    Returns: hxmap
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: hxmap, "sir_const_i64"
+                                                    Returns: hxidx
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: EmitU32LEB, hxidx
+                                                    Returns: leb
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: PushList, state, leb
+                                                    Returns: state
+                Branch
+                    Condition: isConst
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: kind, "null"
+                            Returns: isNull
+                        Branch
+                            Condition: isNull
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Push, state, 16
+                                    Returns: state
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: state, "hidx"
+                                    Returns: hxmap
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: hxmap, "sir_const_null"
+                                    Returns: hxidx
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: EmitU32LEB, hxidx
+                                    Returns: leb
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: PushList, state, leb
+                                    Returns: state
+                        Branch
+                            Condition: isNull
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: state, "v2l"
+                                    Returns: v2l
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: v2l, val
+                                    Returns: li
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Push, state, 32
+                                    Returns: state
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: EmitU32LEB, li
+                                    Returns: leb
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: PushList, state, leb
+                                    Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitOperandRaw
+        Params: state, opnd
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: opnd, "kind"
+            Returns: kind
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: opnd, "val"
+            Returns: val
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: kind, "const"
+            Returns: isConst
+        Branch
+            Condition: isConst
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.TypeOf
+                    Params: val
+                    Returns: rvt
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: rvt, "float"
+                    Returns: risFloat
+                Branch
+                    Condition: risFloat
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: IR.Trap
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: Push, state, 66
+                            Returns: state
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: EmitSignedLEB, val
+                            Returns: leb
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: PushList, state, leb
+                            Returns: state
+        Branch
+            Condition: isConst
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "v2l"
+                    Returns: v2l
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: v2l, val
+                    Returns: li
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Push, state, 32
+                    Returns: state
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, li
+                    Returns: leb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushList, state, leb
+                    Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

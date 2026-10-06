@@ -1,0 +1,51 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitSection (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitSection
+        Params: sid, payload
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: payload
+            Returns: L
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, L
+            Returns: plen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: sid
+            Returns: head
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: head, plen
+            Returns: mid
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: mid, payload
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

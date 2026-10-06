@@ -1,0 +1,6 @@
+EmitFloatInstrModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits the float64 domain: IR.F64Add/Sub/Mul/Div/Eq/Lt/Gt/FromI64/ToI64/Floor.
+    Provides: EmitFloatInstr(state, ins) -> state.

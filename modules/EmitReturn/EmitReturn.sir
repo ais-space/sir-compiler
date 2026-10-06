@@ -1,0 +1,74 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitReturn — Return-block emission
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitReturn
+        Params: state, b, term
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: b, "instrs"
+            Returns: instrs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitInstrs, state, instrs
+            Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "val"
+            Returns: tv
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: tv, null
+            Returns: tvn
+        Branch
+            Condition: tvn
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Params: "kind", "null"
+                    Returns: nopnd
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitOperand, state, nopnd
+                    Returns: state
+        Branch
+            Condition: tvn
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitOperand, state, tv
+                    Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Push, state, 15
+            Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

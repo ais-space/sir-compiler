@@ -1,0 +1,25 @@
+EmitReturnModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: EmitReturn — Return-block emission
+
+    Function
+        Name: EmitReturn
+        Params: state, b, term
+        Returns: state
+
+    DependsOn
+        EmitInstrs, EmitOperand
+
+    Reads
+        b["instrs"], term["val"]
+
+    Writes
+        state["out"]
+
+    Behavior
+        Emits the block instructions, then the return operand (term.val or null), then the RETURN opcode
+
+    Notes
+        Matches the Return handler in emit_block

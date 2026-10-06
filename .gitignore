@@ -1,0 +1,4 @@
+# ── Generated WASM runtime / output artifacts ──
+*.wasm
+*.wat
+runtime_blob.sir.inc

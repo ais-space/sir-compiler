@@ -1,0 +1,393 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: LowerInstr (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: LowerInstr
+        Params: node
+        Returns: ir
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: node, "props"
+            Returns: props
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: props, "Op"
+            Returns: op
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: props, "Params"
+            Returns: pstr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: props, "Returns"
+            Returns: dstName
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: MapOp, op
+            Returns: irop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrFind
+            Params: op, "Mem.", 0
+            Returns: mIdx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Ge
+            Params: mIdx, 0
+            Returns: isMem
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Ctrl.Call"
+            Returns: isCall
+        Branch
+            Condition: isCall
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: SplitArgs, pstr
+                    Returns: raws
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: raws, 0
+                    Returns: fnameTok
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrTrim
+                    Params: fnameTok
+                    Returns: fname
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Returns: fopnd
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: fopnd, "kind", "const"
+                    Returns: fopnd
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: fopnd, "val", fname
+                    Returns: fopnd
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: LowerArgs, pstr
+                    Returns: allArgs
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: allArgs
+                    Returns: la
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Returns: args
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: args, fopnd
+                    Returns: args
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 1
+                    Returns: k
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: k, la
+                    Returns: kc
+                Loop
+                    Condition: kc
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: allArgs, k
+                            Returns: a
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: args, a
+                            Returns: args
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Add
+                            Params: k, 1
+                            Returns: k
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: k, la
+                            Returns: kc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Returns: ir
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: ir, "op", irop
+                    Returns: ir
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: ir, "args", args
+                    Returns: ir
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: ir, "dst", dstName
+                    Returns: ir
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: LowerArgs, pstr
+                    Returns: args
+                Branch
+                    Condition: isMem
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: LowerMemKind, op, args
+                            Returns: memK
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: memK, ""
+                            Returns: memEmpty
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Not
+                            Params: memEmpty
+                            Returns: memTake
+                        Branch
+                            Condition: memTake
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Id
+                                    Params: memK
+                                    Returns: irop
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListLen
+                                    Params: args
+                                    Returns: memAlen
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.List
+                                    Returns: memNewArgs
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: memK, "IR.GlobalGet"
+                                    Returns: isGG
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: memK, "IR.GlobalSet"
+                                    Returns: isGS
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: isGG, isGS
+                                    Returns: isCursor
+                                Branch
+                                    Condition: isCursor
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Map
+                                            Returns: g0
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: g0, "kind", "const"
+                                            Returns: g0
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: g0, "val", 0
+                                            Returns: g0
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListPush
+                                            Params: memNewArgs, g0
+                                            Returns: memNewArgs
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 0
+                                            Returns: memSi
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lt
+                                            Params: memSi, memAlen
+                                            Returns: memSc
+                                        Loop
+                                            Condition: memSc
+                                            Body
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: args, memSi
+                                                    Returns: memE
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListPush
+                                                    Params: memNewArgs, memE
+                                                    Returns: memNewArgs
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Add
+                                                    Params: memSi, 1
+                                                    Returns: memSi
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Lt
+                                                    Params: memSi, memAlen
+                                                    Returns: memSc
+                                Branch
+                                    Condition: isCursor
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: memSi
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lt
+                                            Params: memSi, memAlen
+                                            Returns: memSc
+                                        Loop
+                                            Condition: memSc
+                                            Body
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: args, memSi
+                                                    Returns: memE
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListPush
+                                                    Params: memNewArgs, memE
+                                                    Returns: memNewArgs
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Add
+                                                    Params: memSi, 1
+                                                    Returns: memSi
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Lt
+                                                    Params: memSi, memAlen
+                                                    Returns: memSc
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Id
+                                    Params: memNewArgs
+                                    Returns: args
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Returns: ir
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: ir, "op", irop
+                    Returns: ir
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: ir, "args", args
+                    Returns: ir
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: ir, "dst", dstName
+                    Returns: ir
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ir

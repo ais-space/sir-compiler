@@ -1,0 +1,9 @@
+EmitCallArgsModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits function call arguments (call operand sequence) for the Call instruction.
+    Provides: EmitCallArgs(state, args, fromIdx) -> state. Emits operands starting at index fromIdx (plain calls — 1, skipping the function name). Returns state with appended bytes (each operand via EmitOperand).
+    DependsOn: EmitOperand.
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitCallArgs/EmitCallArgs.sir).
+    Notes: called from EmitInstr for the Call opcode (0x10) after emitting the opcode itself and the function index.

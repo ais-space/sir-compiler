@@ -1,0 +1,422 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: MapOp (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: MapOp
+        Params: op
+        Returns: irop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: "IR.Unknown"
+            Returns: irop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.Equals"
+            Returns: isEquals
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.Lit"
+            Returns: isLit
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.List"
+            Returns: isList
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.Map"
+            Returns: isMap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Ctrl.Call"
+            Returns: isCall
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Sys.Input"
+            Returns: isInput
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Sys.Output"
+            Returns: isOutput
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Sys.Storage.Read"
+            Returns: isRead
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Sys.Trace"
+            Returns: isTrace
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Sys.TraceVal"
+            Returns: isTraceVal
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.Eq"
+            Returns: isEq
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.BitAnd"
+            Returns: isBitAnd
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.BitOr"
+            Returns: isBitOr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.ShiftL"
+            Returns: isShiftL
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.ShiftR"
+            Returns: isShiftR
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Core.IntDiv"
+            Returns: isIntDiv
+        Branch
+            Condition: isEq
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.Equ"
+                    Returns: irop
+        Branch
+            Condition: isBitAnd
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.BitAnd"
+                    Returns: irop
+        Branch
+            Condition: isBitOr
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.BitOr"
+                    Returns: irop
+        Branch
+            Condition: isShiftL
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.ShiftL"
+                    Returns: irop
+        Branch
+            Condition: isShiftR
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.ShiftR"
+                    Returns: irop
+        Branch
+            Condition: isIntDiv
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.Div"
+                    Returns: irop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: isEquals, isLit
+            Returns: r1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: isList, isMap
+            Returns: r2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: r1, r2
+            Returns: r1b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: r1b, isEq
+            Returns: r1c
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: r1c, isBitAnd
+            Returns: r1d
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: r1d, isBitOr
+            Returns: r1e
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: r1e, isShiftL
+            Returns: r1f
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: r1f, isShiftR
+            Returns: r1g
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: r1g, isIntDiv
+            Returns: isRenamedCore
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrFind
+            Params: op, "Core.", 0
+            Returns: idx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Ge
+            Params: idx, 0
+            Returns: isCore
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: isRenamedCore
+            Returns: notRenamed
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: isCore, notRenamed
+            Returns: isGenericCore
+        Branch
+            Condition: isEquals
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.StructEqu"
+                    Returns: irop
+        Branch
+            Condition: isLit
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.Const"
+                    Returns: irop
+        Branch
+            Condition: isList
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.ListMake"
+                    Returns: irop
+        Branch
+            Condition: isMap
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.MapMake"
+                    Returns: irop
+        Branch
+            Condition: isCall
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.Call"
+                    Returns: irop
+        Branch
+            Condition: isInput
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.Input"
+                    Returns: irop
+        Branch
+            Condition: isOutput
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.Output"
+                    Returns: irop
+        Branch
+            Condition: isRead
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.ReadFile"
+                    Returns: irop
+        Branch
+            Condition: isTrace
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.Trace"
+                    Returns: irop
+        Branch
+            Condition: isTraceVal
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.TraceVal"
+                    Returns: irop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Sys.FdWrite"
+            Returns: isFdWrite
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: op, "Sys.FdRead"
+            Returns: isFdRead
+        Branch
+            Condition: isFdWrite
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.FdWrite"
+                    Returns: irop
+        Branch
+            Condition: isFdRead
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "IR.FdRead"
+                    Returns: irop
+        Branch
+            Condition: isGenericCore
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrLen
+                    Params: op
+                    Returns: ol
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Sub
+                    Params: ol, 5
+                    Returns: restLen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrSub
+                    Params: op, 5, restLen
+                    Returns: rest
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: "IR.", rest
+                    Returns: irop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrFind
+            Params: op, "IR.", 0
+            Returns: irIdx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Ge
+            Params: irIdx, 0
+            Returns: isIR
+        Branch
+            Condition: isIR
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: op
+                    Returns: irop
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: irop

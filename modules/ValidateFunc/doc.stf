@@ -1,0 +1,8 @@
+ValidateFuncModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Validates an IR function: checks name/params/blocks as lists and runs each block through ValidateBlock. Returns 1 on success. Composite part of IsTargetNeutral.
+    Provides: ValidateFunc(func) -> ok.
+    DependsOn: ValidateBlock.
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../ValidateFunc/ValidateFunc.sir).

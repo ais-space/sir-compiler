@@ -1,0 +1,9 @@
+EmitBitUnboxModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Appends the unbox sequence for a boxed operand on the stack top (i64.const 8, i64.add, i64.load align=3 offset=0): the box pointer becomes the raw i64 payload. Used by boxed bit/shift Op (IR.BitAnd/BitOr/ShiftL/ShiftR), whose IR.W* twins stay raw.
+    Provides: EmitBitUnbox(state) -> state. Precondition: box pointer on the stack top; postcondition: unbox appended, raw payload on top.
+    DependsOn: Push, PushList, EmitSignedLEB (leaf; already in the GenWasm closure).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitBitUnbox/EmitBitUnbox.sir); called from EmitInstr.sir.
+    Notes: the caller lays the box operand via EmitOperand; the load alignment mirrors EmitCond (align 3, offset 0).

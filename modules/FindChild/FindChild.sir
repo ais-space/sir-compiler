@@ -1,0 +1,99 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: FindChild (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: FindChild
+        Params: node, name
+        Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: node, "children"
+            Returns: kids
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: kids
+            Returns: kl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: k
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: found
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: k, kl
+            Returns: kc
+        Loop
+            Condition: kc
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: kids, k
+                    Returns: ch
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: ch, "name"
+                    Returns: cn
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: cn, name
+                    Returns: hit
+                Branch
+                    Condition: hit
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: kids, k
+                            Returns: found
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: skip
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: k, 1
+                    Returns: k
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: k, kl
+                    Returns: kc
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: found

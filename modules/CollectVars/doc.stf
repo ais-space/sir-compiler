@@ -1,0 +1,9 @@
+CollectVarsModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Collects the set of all function variables (dst names of instructions + Return terminator return operand), with no duplicates.
+    Provides: CollectVars(func) -> vars. func — IR function; returns the list of unique variable names.
+    DependsOn: InList (dedup on append; Core traversal of blocks/instructions/terminator).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../CollectVars/CollectVars.sir).
+    Notes: used by EmitFuncBody to compute the local count (VarsMinus of params) and BuildVarMap.

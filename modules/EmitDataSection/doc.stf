@@ -1,0 +1,9 @@
+EmitDataSectionModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Assembles the WASM module data section (id 11) from ordered string literals: segment count (EmitU32LEB), then per string a segment of the form [flag 0x00; expr i32.const offset; end 0x0b; length vector (u32 LEB); UTF-8 bytes]. Atomized from GenWasm.sir.
+    Provides: EmitDataSection(strOrder, strMap) -> dataSec (section byte list). strOrder — string order (from CollectStr), strMap — string to [offset, len].
+    DependsOn: EmitU32LEB (count and lengths), EmitSignedLEB (offsets), StrBytes (string bytes), EmitSection (id-11 section wrapper).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitDataSection/EmitDataSection.sir); called right after the code section assembly.
+    Notes: Verbatim move of the data-section block from GenWasm.sir; 4-byte string alignment is set in CollectStr; deterministic (fixpoint b1==b0).

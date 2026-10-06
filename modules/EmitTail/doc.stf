@@ -1,0 +1,8 @@
+EmitTailModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Closes the open block with a Jump or Return term at the tail.
+    Provides: EmitTail(open, tail, blocks, openIdx) -> res.
+    DependsOn: none
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../EmitTail/EmitTail.sir).

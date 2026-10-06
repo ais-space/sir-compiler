@@ -1,0 +1,386 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: PromoteStrConsts (atomized module) - promote source string-literal
+    operands into IR.Const(string) instructions + ref usages, BEFORE local
+    allocation (CollectVars/BuildVarMap) so the temp locals are registered.
+
+    Function
+        Type: Function
+        Role: Content
+        Name: PromoteStrConsts
+        Params: func
+        Returns: func
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: func, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: blocks
+            Returns: BL
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: bi
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: bi, BL
+            Returns: bcont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: cnt
+        Loop
+            Condition: bcont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: blocks, bi
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: b, "instrs"
+                    Returns: instrs
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: instrs
+                    Returns: IL
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 0
+                    Returns: ii
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: ii, IL
+                    Returns: icont
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Returns: newInstrs
+                Loop
+                    Condition: icont
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: instrs, ii
+                            Returns: ins
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: ins, "args"
+                            Returns: args
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: ins, "op"
+                            Returns: iop
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListLen
+                            Params: args
+                            Returns: AL
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: aj
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: aj, AL
+                            Returns: ajc
+                        Loop
+                            Condition: ajc
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: args, aj
+                                    Returns: arg
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: arg, "kind"
+                                    Returns: akind
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: arg, "val"
+                                    Returns: aval
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.TypeOf
+                                    Params: aval
+                                    Returns: avt
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: akind, "const"
+                                    Returns: isC
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: avt, "str"
+                                    Returns: isS
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.And
+                                    Params: isC, isS
+                                    Returns: isStrConst
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iop, "IR.Call"
+                                    Returns: isCall
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: aj, 0
+                                    Returns: isA0
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.And
+                                    Params: isCall, isA0
+                                    Returns: isCallee
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iop, "IR.Const"
+                                    Returns: isConstOp
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: isCallee, isConstOp
+                                    Returns: skipPromo
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iop, "IR.Trace"
+                                    Returns: isTraceOp
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iop, "IR.TraceVal"
+                                    Returns: isTraceValOp
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: isTraceOp, isTraceValOp
+                                    Returns: isTraceAny
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: skipPromo, isTraceAny
+                                    Returns: skipAll
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Not
+                                    Params: skipAll
+                                    Returns: doPromo
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.And
+                                    Params: isStrConst, doPromo
+                                    Returns: doPromote
+                                Branch
+                                    Condition: doPromote
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.StrConcat
+                                            Params: "__sc", cnt
+                                            Returns: tname
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Map
+                                            Returns: cins
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: cins, "op", "IR.Const"
+                                            Returns: cins
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.List
+                                            Params: arg
+                                            Returns: cargs
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: cins, "args", cargs
+                                            Returns: cins
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: cins, "dst", tname
+                                            Returns: cins
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListPush
+                                            Params: newInstrs, cins
+                                            Returns: newInstrs
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Map
+                                            Returns: narg
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: narg, "kind", "ref"
+                                            Returns: narg
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapSet
+                                            Params: narg, "val", tname
+                                            Returns: narg
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListSet
+                                            Params: args, aj, narg
+                                            Returns: args
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Add
+                                            Params: cnt, 1
+                                            Returns: cnt
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 0
+                                            Returns: skip
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: aj, 1
+                                    Returns: aj
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: aj, AL
+                                    Returns: ajc
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: ins, "args", args
+                            Returns: ins
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: newInstrs, ins
+                            Returns: newInstrs
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Add
+                            Params: ii, 1
+                            Returns: ii
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: ii, IL
+                            Returns: icont
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: b, "instrs", newInstrs
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListSet
+                    Params: blocks, bi, b
+                    Returns: blocks
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: bi, 1
+                    Returns: bi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: bi, BL
+                    Returns: bcont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: func, "blocks", blocks
+            Returns: func
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: func

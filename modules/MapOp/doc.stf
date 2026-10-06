@@ -1,0 +1,7 @@
+MapOpModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Maps the SIR op space to the IR op space: Core.Equals to IR.StructEqu, Core.Lit to IR.Lit, Core.* names are renamed to IR.* (with exceptions), Ctrl.Call/Sys.*/Mem.* are preserved. Returns the IR op string.
+    Provides: MapOp(op) -> irop.
+    Composition: Native include from modules/Compiler/Compiler.sir (Path: ../MapOp/MapOp.sir).

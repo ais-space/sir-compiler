@@ -1,0 +1,68 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ValidateTerm (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ValidateTerm
+        Params: term
+        Returns: ok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: term, "op"
+            Returns: top
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: top, "Return"
+            Returns: a
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: top, "Branch"
+            Returns: b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: top, "Jump"
+            Returns: c
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: top, "Call"
+            Returns: d
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: a, b
+            Returns: e
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: c, d
+            Returns: f
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: e, f
+            Returns: ok
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ok

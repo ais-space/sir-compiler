@@ -1,0 +1,274 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR runtime - type introspection
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_typeof
+        Params: box
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: box, 4
+            Returns: traw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_i64, traw
+            Returns: t
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: "unknown"
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: t, 0
+            Returns: c0
+        Branch
+            Condition: c0
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "int"
+                    Returns: r0
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: r0
+                    Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: t, 1
+            Returns: c1
+        Branch
+            Condition: c1
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "bool"
+                    Returns: r1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: r1
+                    Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: t, 2
+            Returns: c2
+        Branch
+            Condition: c2
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "str"
+                    Returns: r2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: r2
+                    Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: t, 3
+            Returns: c3
+        Branch
+            Condition: c3
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "list"
+                    Returns: r3
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: r3
+                    Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: t, 4
+            Returns: c4
+        Branch
+            Condition: c4
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "map"
+                    Returns: r4
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: r4
+                    Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: t, 5
+            Returns: c5
+        Branch
+            Condition: c5
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "null"
+                    Returns: r5
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: r5
+                    Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: t, 6
+            Returns: c6
+        Branch
+            Condition: c6
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "float"
+                    Returns: r6
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: r6
+                    Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: t, 7
+            Returns: c7
+        Branch
+            Condition: c7
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "err"
+                    Returns: r7
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: r7
+                    Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: res
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_is_list
+        Params: x
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WEq
+            Params: x, 0
+            Returns: isNullRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, isNullRaw
+            Returns: isNull
+        Branch
+            Condition: isNull
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WLit
+                    Params: 0
+                    Returns: isList
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, isList
+                    Returns: out
+            FalseBlock
+                Type: FalseBlock
+                Role: Content
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Load
+                    Params: x, 4
+                    Returns: tag
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.WEq
+                    Params: tag, 3
+                    Returns: isList2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: sir_const_bool, isList2
+                    Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

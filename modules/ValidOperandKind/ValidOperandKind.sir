@@ -1,0 +1,62 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ValidOperandKind (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ValidOperandKind
+        Params: kind
+        Returns: ok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: kind, "ref"
+            Returns: a
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: kind, "const"
+            Returns: b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: kind, "global"
+            Returns: c
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: kind, "null"
+            Returns: d
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: a, b
+            Returns: e
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: c, d
+            Returns: f
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Or
+            Params: e, f
+            Returns: ok
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ok

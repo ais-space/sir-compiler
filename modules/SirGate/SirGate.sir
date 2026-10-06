@@ -1,0 +1,853 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SirGate - SIR version gate (newer-only refusal with a loud diagnostic)
+    Capabilities: Sys.Output
+
+    Function
+        Type: Function
+        Role: Content
+        Name: SirSupported
+        Returns: sup
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Newest supported SIR major
+            Op: Core.Lit
+            Params: 0
+            Returns: maj
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Newest supported SIR minor
+            Op: Core.Lit
+            Params: 11
+            Returns: min
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Supported version contract
+            Op: Core.Map
+            Params: "major", maj, "minor", min, "sir", "0.11.1", "compiler", "0.2.2"
+            Returns: sup
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: sup
+
+    Function
+        Type: Function
+        Role: Content
+        Name: SirGate
+        Params: src
+        Returns: gatedSrc
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Line separator for source scan
+            Op: Core.Chr
+            Params: 10
+            Returns: nl
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Supported contract for messages and compare
+            Op: Ctrl.Call
+            Params: SirSupported
+            Returns: sup
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Supported major
+            Op: Core.MapGet
+            Params: sup, "major"
+            Returns: supMaj
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Supported minor
+            Op: Core.MapGet
+            Params: sup, "minor"
+            Returns: supMin
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Supported SIR label
+            Op: Core.MapGet
+            Params: sup, "sir"
+            Returns: supSir
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Own compiler label
+            Op: Core.MapGet
+            Params: sup, "compiler"
+            Returns: supComp
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Source length bounds the scan
+            Op: Core.StrLen
+            Params: src
+            Returns: n
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Scan position starts at zero
+            Op: Core.Lit
+            Params: 0
+            Returns: pos
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: No version seen yet
+            Op: Core.Lit
+            Params: ""
+            Returns: ver
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Outside Context until proven inside
+            Op: Core.Lit
+            Params: 0
+            Returns: inCtx
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: No depth-zero block seen yet
+            Op: Core.Lit
+            Params: 0
+            Returns: sawTop
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Enter while position is inside
+            Op: Core.Lt
+            Params: pos, n
+            Returns: cont
+
+        Loop
+            Type: Loop
+            Role: Content
+            Caption: Hop line to line for a depth-zero Context version claim
+            Condition: cont
+
+            Body
+                Type: Section
+                Role: Content
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Find the next line end from here
+                    Op: Core.StrFind
+                    Params: src, nl, pos
+                    Returns: eol
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Missing end means the last line
+                    Op: Core.Eq
+                    Params: eol, -1
+                    Returns: eolNeg
+
+                Branch
+                    Condition: eolNeg
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Sub
+                            Params: n, pos
+                            Returns: span
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Sub
+                            Params: eol, pos
+                            Returns: span
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Read the current line
+                    Op: Core.StrSub
+                    Params: src, pos, span
+                    Returns: ln
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Skip empty lines silently
+                    Op: Core.StrLen
+                    Params: ln
+                    Returns: llen
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Non-empty lines carry structure
+                    Op: Core.Gt
+                    Params: llen, 0
+                    Returns: nonEmpty
+
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Caption: Structure or silence
+                    Condition: nonEmpty
+
+                    TrueBlock
+                        Type: Section
+                        Role: Content
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: First character tells depth
+                            Op: Core.StrSub
+                            Params: ln, 0, 1
+                            Returns: ch0
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Indented lines live inside a block
+                            Op: Core.Eq
+                            Params: ch0, " "
+                            Returns: indented
+
+                        Branch
+                            Type: Branch
+                            Role: Content
+                            Caption: Inside a block or at depth zero
+                            Condition: indented
+
+                            TrueBlock
+                                Type: Section
+                                Role: Content
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Only Context interior counts
+                                    Op: Core.Eq
+                                    Params: inCtx, 1
+                                    Returns: ctxOn
+
+                                Branch
+                                    Type: Branch
+                                    Role: Content
+                                    Caption: Version claim or ordinary property
+                                    Condition: ctxOn
+
+                                    TrueBlock
+                                        Type: Section
+                                        Role: Content
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: Look for the version property
+                                            Op: Core.StrFind
+                                            Params: ln, "DocumentVersion:"
+                                            Returns: dvIdx
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: Absent marker means no claim here
+                                            Op: Core.Eq
+                                            Params: dvIdx, -1
+                                            Returns: noDv
+
+                                        Branch
+                                            Type: Branch
+                                            Role: Content
+                                            Caption: Claim or pass-through
+                                            Condition: noDv
+
+                                            TrueBlock
+                                                Type: Section
+                                                Role: Content
+
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Caption: Version unchanged
+                                                    Op: Core.Id
+                                                    Params: ver
+                                                    Returns: ver
+
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Caption: Context unchanged
+                                                    Op: Core.Id
+                                                    Params: inCtx
+                                                    Returns: inCtx
+
+                                            FalseBlock
+                                                Type: Section
+                                                Role: Content
+
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Caption: First claim wins on multi-doc input
+                                                    Op: Core.Eq
+                                                    Params: ver, ""
+                                                    Returns: verEmpty
+
+                                                Branch
+                                                    Condition: verEmpty
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Caption: Value starts past the colon and space
+                                                            Op: Core.Add
+                                                            Params: dvIdx, 17
+                                                            Returns: vs
+
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Caption: Value runs to line end
+                                                            Op: Core.Sub
+                                                            Params: llen, vs
+                                                            Returns: vlen
+
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Caption: Take the declared version
+                                                            Op: Core.StrSub
+                                                            Params: ln, vs, vlen
+                                                            Returns: ver
+
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Caption: Context unchanged
+                                                            Op: Core.Id
+                                                            Params: inCtx
+                                                            Returns: inCtx
+
+                                                    FalseBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Id
+                                                            Params: ver
+                                                            Returns: ver
+
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Id
+                                                            Params: inCtx
+                                                            Returns: inCtx
+
+                                    FalseBlock
+                                        Type: Section
+                                        Role: Content
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: Version unchanged
+                                            Op: Core.Id
+                                            Params: ver
+                                            Returns: ver
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: Context unchanged
+                                            Op: Core.Id
+                                            Params: inCtx
+                                            Returns: inCtx
+
+                            FalseBlock
+                                Type: Section
+                                Role: Content
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Depth-zero Context opens the claim zone
+                                    Op: Core.Eq
+                                    Params: ln, "Context"
+                                    Returns: isCtx
+
+                                Branch
+                                    Type: Branch
+                                    Role: Content
+                                    Caption: Enter or leave the claim zone
+                                    Condition: isCtx
+
+                                    TrueBlock
+                                        Type: Section
+                                        Role: Content
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: Inside Context now
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: inCtx
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: A depth-zero block exists
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: sawTop
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: Version unchanged
+                                            Op: Core.Id
+                                            Params: ver
+                                            Returns: ver
+
+                                    FalseBlock
+                                        Type: Section
+                                        Role: Content
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: Any other depth-zero block closes it
+                                            Op: Core.Lit
+                                            Params: 0
+                                            Returns: inCtx
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: A depth-zero block exists
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: sawTop
+
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Caption: Version unchanged
+                                            Op: Core.Id
+                                            Params: ver
+                                            Returns: ver
+
+                    FalseBlock
+                        Type: Section
+                        Role: Content
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Version unchanged
+                            Op: Core.Id
+                            Params: ver
+                            Returns: ver
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Context unchanged
+                            Op: Core.Id
+                            Params: inCtx
+                            Returns: inCtx
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Hop past the line end
+                    Op: Core.Add
+                    Params: eol, 1
+                    Returns: posNext
+
+                Branch
+                    Condition: eolNeg
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: n
+                            Returns: pos
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: posNext
+                            Returns: pos
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Re-evaluate the bound
+                    Op: Core.Lt
+                    Params: pos, n
+                    Returns: cont
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Empty claim means no declaration
+            Op: Core.Eq
+            Params: ver, ""
+            Returns: missingRaw
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Degenerate whitespace-only input has no top block
+            Op: Core.Gt
+            Params: sawTop, 0
+            Returns: hasTop
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Missing counts only on real input
+            Op: Core.And
+            Params: hasTop, missingRaw
+            Returns: missing
+
+        Branch
+            Type: Branch
+            Role: Content
+            Caption: Declared or missing
+            Condition: missing
+
+            TrueBlock
+                Type: Section
+                Role: Content
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Missing-declaration diagnostic
+                    Op: Core.StrConcat
+                    Params: "No SIR version declared. Add a Context header with DocumentVersion. This compiler is ", supComp, " and supports SIR up to ", supSir, "."
+                    Returns: msg
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Say it loudly on the channel
+                    Op: Sys.Output
+                    Params: msg
+                    Returns: said
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Refusal stub carries the diagnostic
+                    Op: Ctrl.Call
+                    Params: SirRefusal, msg
+                    Returns: gatedSrc
+
+            FalseBlock
+                Type: Section
+                Role: Content
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Split the dotted version
+                    Op: Core.StrSplit
+                    Params: ver, "."
+                    Returns: parts
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Need at least major and minor
+                    Op: Core.ListLen
+                    Params: parts
+                    Returns: plen
+
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Short claim is malformed
+                    Op: Core.Lt
+                    Params: plen, 2
+                    Returns: malformed
+
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Caption: Well-formed or malformed
+                    Condition: malformed
+
+                    TrueBlock
+                        Type: Section
+                        Role: Content
+
+                        Branch
+                            Type: Branch
+                            Role: Content
+                            Caption: Degenerate input passes silently
+                            Condition: hasTop
+
+                            TrueBlock
+                                Type: Section
+                                Role: Content
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Malformed-declaration diagnostic
+                                    Op: Core.StrConcat
+                                    Params: "Bad SIR version declared. Add a Context header with DocumentVersion like 0.11.1. This compiler is ", supComp, " and supports SIR up to ", supSir, "."
+                                    Returns: msg
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Say it loudly on the channel
+                                    Op: Sys.Output
+                                    Params: msg
+                                    Returns: said
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Refusal stub carries the diagnostic
+                                    Op: Ctrl.Call
+                                    Params: SirRefusal, msg
+                                    Returns: gatedSrc
+
+                            FalseBlock
+                                Type: Section
+                                Role: Content
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Nothing to gate passes through
+                                    Op: Core.Id
+                                    Params: src
+                                    Returns: gatedSrc
+
+                    FalseBlock
+                        Type: Section
+                        Role: Content
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Declared major text
+                            Op: Core.ListGet
+                            Params: parts, 0
+                            Returns: smaj
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Declared minor text
+                            Op: Core.ListGet
+                            Params: parts, 1
+                            Returns: smin
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Declared major number
+                            Op: Core.StrParse
+                            Params: smaj
+                            Returns: maj
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Declared minor number
+                            Op: Core.StrParse
+                            Params: smin
+                            Returns: min
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Newer major is always newer
+                            Op: Core.Gt
+                            Params: maj, supMaj
+                            Returns: majNewer
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Same major allows minor compare
+                            Op: Core.Eq
+                            Params: maj, supMaj
+                            Returns: majEq
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Newer minor under same major
+                            Op: Core.Gt
+                            Params: min, supMin
+                            Returns: minNewer
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Minor verdict counts on equal major
+                            Op: Core.And
+                            Params: majEq, minNewer
+                            Returns: minNewerEq
+
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Newer on either axis
+                            Op: Core.Or
+                            Params: majNewer, minNewerEq
+                            Returns: newer
+
+                        Branch
+                            Type: Branch
+                            Role: Content
+                            Caption: Newer or covered
+                            Condition: newer
+
+                            TrueBlock
+                                Type: Section
+                                Role: Content
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Newer-version diagnostic
+                                    Op: Core.StrConcat
+                                    Params: "SIR ", ver, " needs a newer compiler. This compiler is ", supComp, " and supports SIR up to ", supSir, "."
+                                    Returns: msg
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Say it loudly on the channel
+                                    Op: Sys.Output
+                                    Params: msg
+                                    Returns: said
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Refusal stub carries the diagnostic
+                                    Op: Ctrl.Call
+                                    Params: SirRefusal, msg
+                                    Returns: gatedSrc
+
+                            FalseBlock
+                                Type: Section
+                                Role: Content
+
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Caption: Covered version passes through
+                                    Op: Core.Id
+                                    Params: src
+                                    Returns: gatedSrc
+
+        Result
+            Type: Result
+            Role: Content
+            Caption: Gated source text
+            State: Ok
+            Returns: gatedSrc
+
+    Function
+        Type: Function
+        Role: Content
+        Name: SirRefusal
+        Params: msg
+        Returns: stub
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Line separator for stub assembly
+            Op: Core.Chr
+            Params: 10
+            Returns: nl
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Stub head with a current version claim
+            Op: Core.StrConcat
+            Params: "Context", nl, "    DocumentVersion: 0.11.1", nl, "    GrammarVersion: 1.0.1", nl, "Module", nl, "    Type: Module", nl, "    Role: Content", nl
+            Returns: head
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Stub body opens the function
+            Op: Core.StrConcat
+            Params: "    Caption: Version refusal notice", nl, "    Capabilities: Sys.Output", nl, "    Function", nl, "        Name: main", nl, "        Returns: o", nl, "        Instruction", nl
+            Returns: mid
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Stub literal carries the diagnostic
+            Op: Core.StrConcat
+            Params: "            Type: Instruction", nl, "            Role: Content", nl, "            Op: Core.Lit", nl, "            Params: "", msg, """, nl, "            Returns: m", nl
+            Returns: lit
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Stub tail prints and returns
+            Op: Core.StrConcat
+            Params: "        Instruction", nl, "            Type: Instruction", nl, "            Role: Content", nl, "            Op: Sys.Output", nl, "            Params: m", nl, "            Returns: o", nl, "        Result", nl, "            Type: Result", nl, "            Role: Content", nl, "            State: Ok", nl, "            Returns: o", nl
+            Returns: tail
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Assemble the refusal program
+            Op: Core.StrConcat
+            Params: head, mid, lit, tail
+            Returns: stub
+
+        Result
+            Type: Result
+            Role: Content
+            Caption: Refusal program text
+            State: Ok
+            Returns: stub

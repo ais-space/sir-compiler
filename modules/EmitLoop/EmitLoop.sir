@@ -1,0 +1,287 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitLoop (atomized module)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitLoop
+        Params: node, blocks, openIdx, counter
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.NumToStr
+            Params: counter
+            Returns: cv
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: "b", cv
+            Returns: hId
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: counter, 1
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.NumToStr
+            Params: counter
+            Returns: cv2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: "b", cv2
+            Returns: bodyId
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: counter, 1
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.NumToStr
+            Params: counter
+            Returns: cv3
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: "b", cv3
+            Returns: exitId
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: counter, 1
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: blocks, openIdx
+            Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: jt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: jt, "op", "Jump"
+            Returns: jt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: jt, "target", hId
+            Returns: jt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: open, "term", jt
+            Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListSet
+            Params: blocks, openIdx, open
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: NewOpen, blocks, hId
+            Returns: no1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: no1, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: no1, "openIdx"
+            Returns: hIdx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: blocks, hIdx
+            Returns: hb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: hterm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: hterm, "op", "Branch"
+            Returns: hterm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: node, "props"
+            Returns: lprops
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: lprops, "Condition"
+            Returns: condName
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: condOp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: condOp, "kind", "ref"
+            Returns: condOp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: condOp, "val", condName
+            Returns: condOp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: hterm, "cond", condOp
+            Returns: hterm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: hterm, "true", bodyId
+            Returns: hterm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: hterm, "false", exitId
+            Returns: hterm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: hterm, "loop", 1
+            Returns: hterm
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: hb, "term", hterm
+            Returns: hb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListSet
+            Params: blocks, hIdx, hb
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: bodyTail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: bodyTail, "kind", "jump"
+            Returns: bodyTail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: bodyTail, "target", hId
+            Returns: bodyTail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitChild, blocks, bodyId, node, "Body", bodyTail, counter
+            Returns: res1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: res1, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: res1, "counter"
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: NewOpen, blocks, exitId
+            Returns: no3
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: no3, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: no3, "openIdx"
+            Returns: openIdx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: 
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: res, "blocks", blocks
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: res, "openIdx", openIdx
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: res, "counter", counter
+            Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

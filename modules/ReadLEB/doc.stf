@@ -1,0 +1,9 @@
+ReadLEBModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Reads a single LEB128 number from a byte list at a position. Low-level WASM parsing primitive.
+    Provides: ReadLEB(data, pos) -> res. data — byte list; pos — position; returns map {0: value, 1: new position}.
+    DependsOn: none (leaf; Core bitwise/arithmetic and ListGet).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../ReadLEB/ReadLEB.sir).
+    Notes: used by ParseWasm to read section ids, lengths and indices.

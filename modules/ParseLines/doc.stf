@@ -1,0 +1,8 @@
+ParseLinesModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Tokenization phase: splits the source into records (nodes/properties) honoring indentation.
+    Provides: ParseLines(source) -> pl.
+    DependsOn: PopWhile, TopIdx (via Include)
+    Composition: Native include from modules/Compiler/Compiler.sir (Path: ../ParseLines/ParseLines.sir).

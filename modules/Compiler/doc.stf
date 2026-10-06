@@ -1,0 +1,9 @@
+CompilerModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Entry point and mode dispatcher of the self-hosting SIR compiler. Single function — main, selecting the mode by the mode channel: "ir" → Lower (AST-to-IR); "neutral" → Lower + IsTargetNeutral (target-independence check); "wasm" → GenWasm(IR, runtime) — WASM backend (phase 5); otherwise → Parse (AST, phase 3 regression).
+    Provides: main. Returns (Result) the mode output product: IR tree (ir/neutral), WASM module byte list (wasm), or AST (parse).
+    DependsOn: Parse/Parse.sir, Lower/Lower.sir (+LowerArgs/LowerFunc/LowerInstr/LowerMem), ValidateBlock/ValidateFunc/ValidateInstr/ValidateOperand/ValidateTerm/ValidOperandKind, IsTargetNeutral, GenWasm/GenWasm.sir (backend: GenWasm, ParseWasm), WasiMain, BytesList
+    Composition: Native Include; resolved relative to modules/Compiler/. Pulls in 28 modules (including the GenWasm/GenWasm.sir aggregator); functions merge into a single namespace.
+    Notes: Single main function dispatching on the mode channel. wasm mode: the parsed runtime is read from the "rt" channel (Sys.Input rt), then GenWasm(ir, rt) → ready WASM byte list (deterministic: fixpoint b1==b0).

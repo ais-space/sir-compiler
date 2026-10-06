@@ -1,0 +1,14 @@
+debug_traceModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Traced allocation family for heap census (TRACE_TABLE diagnostics).
+    Provides: alloc_traced(site, size) -> out Logged bump allocation.
+    Provides: map_traced_alloc(size) -> out Logged map backing array.
+    Provides: str_traced_alloc(size) -> out Logged string data.
+    Provides: list_traced_alloc(size) -> out Logged list chunks.
+    Provides: const_traced_alloc(size) -> out Logged constant area.
+    Provides: io_traced_alloc(size) -> out Logged IO buffer.
+    Provides: io_read_traced_alloc(size) -> out Logged read buffer.
+    Provides: io_print_traced_alloc(size) -> out Logged print buffer.
+    Provides: extra_traced_alloc(size) -> out Logged extra area.

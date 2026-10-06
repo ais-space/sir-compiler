@@ -1,0 +1,111 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ApplyNodeNames (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ApplyNodeNames
+        Params: nodes, records
+        Returns: nodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: records
+            Returns: recCount
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: r
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: r, recCount
+            Returns: rCont
+        Loop
+            Condition: rCont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: records, r
+                    Returns: rec
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: rec, "kind"
+                    Returns: kind
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: kind, "node"
+                    Returns: isNode
+                Branch
+                    Condition: isNode
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: rec, "idx"
+                            Returns: idx
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: rec, "name"
+                            Returns: nm
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: nodes, idx
+                            Returns: nd
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: nd, "name", nm
+                            Returns: nd
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListSet
+                            Params: nodes, idx, nd
+                            Returns: nodes
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: skip
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: r, 1
+                    Returns: r
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: r, recCount
+                    Returns: rCont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: nodes

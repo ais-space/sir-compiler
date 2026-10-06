@@ -1,0 +1,8 @@
+EmitChildModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Opens a new block by id and recursively lowers the child node (True/False/Body) via EmitSeq.
+    Provides: EmitChild(blocks, id, node, childName, tail, counter) -> res.
+    DependsOn: FindChild, NewOpen, EmitSeq (via merged namespace)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../EmitChild/EmitChild.sir).

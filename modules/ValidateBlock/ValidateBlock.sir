@@ -1,0 +1,161 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ValidateBlock (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ValidateBlock
+        Params: block
+        Returns: ok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: block, "id"
+            Returns: bid
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: bid
+            Returns: bt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: bt, "str"
+            Returns: idOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: block, "instrs"
+            Returns: instrs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: instrs
+            Returns: it
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: it, "list"
+            Returns: instrsOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: block, "term"
+            Returns: term
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.TypeOf
+            Params: term
+            Returns: tt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: tt, "map"
+            Returns: termOk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: instrs
+            Returns: il
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: ii
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: acc
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: ii, il
+            Returns: ic
+        Loop
+            Condition: ic
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: instrs, ii
+                    Returns: ins
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: ValidateInstr, ins
+                    Returns: iok
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: acc, iok
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: ii, 1
+                    Returns: ii
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: ii, il
+                    Returns: ic
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: ValidateTerm, term
+            Returns: tok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: idOk, instrsOk
+            Returns: s1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: s1, termOk
+            Returns: s2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: s2, acc
+            Returns: s3
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: s3, tok
+            Returns: ok
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ok

@@ -1,0 +1,101 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: PopWhile (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: PopWhile
+        Params: stack, depth
+        Returns: stack
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: stack
+            Returns: L
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Gt
+            Params: L, 1
+            Returns: hasMore
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: TopDepth, stack
+            Returns: td
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Ge
+            Params: td, depth
+            Returns: shouldPop
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.And
+            Params: hasMore, shouldPop
+            Returns: popCont
+        Loop
+            Condition: popCont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: stack
+                    Returns: slen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Sub
+                    Params: slen, 1
+                    Returns: kept
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Slice, stack, 0, kept
+                    Returns: stack
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: stack
+                    Returns: L
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Gt
+                    Params: L, 1
+                    Returns: hasMore
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: TopDepth, stack
+                    Returns: td
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Ge
+                    Params: td, depth
+                    Returns: shouldPop
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.And
+                    Params: hasMore, shouldPop
+                    Returns: popCont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: stack

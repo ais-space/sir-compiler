@@ -1,0 +1,9 @@
+EmitSignedLEBModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Encodes a signed integer into LEB128 (signed WASM variant, via 32-bit two's complement). Primitive for constant operands.
+    Provides: EmitSignedLEB(n) -> out. n — Int (may be negative); returns the signed-LEB128 byte list.
+    DependsOn: none (leaf; Core arithmetic and ListPush).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitSignedLEB/EmitSignedLEB.sir).
+    Notes: correctly encodes negative values (unlike pure unsigned EmitU32LEB); required for signed IR.Const.

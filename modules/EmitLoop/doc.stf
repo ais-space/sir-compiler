@@ -1,0 +1,8 @@
+EmitLoopModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emission of the Loop header plus lowering of the loop body into new blocks (via EmitChild); stamps term["loop"]=1 on the header Branch terminator — the single source of "this is a loop" knowledge for IsLoopHeader (flag-first).
+    Provides: EmitLoop(node, blocks, openIdx, counter) -> res.
+    DependsOn: EmitChild, NewOpen, FindChild, EmitSeq (via merged namespace)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../EmitLoop/EmitLoop.sir).

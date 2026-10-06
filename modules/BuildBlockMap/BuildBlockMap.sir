@@ -1,0 +1,79 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: BuildBlockMap (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: BuildBlockMap
+        Params: blocks, i, m, order
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: blocks
+            Returns: L
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, L
+            Returns: cont
+        Branch
+            Condition: cont
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: blocks, i
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: b, "id"
+                    Returns: id
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: m, id, b
+                    Returns: m2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: order, id
+                    Returns: order2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: BuildBlockMap, blocks, i1, m2, order2
+                    Returns: res
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Params: "m", m, "o", order
+                    Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

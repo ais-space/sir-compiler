@@ -1,0 +1,427 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitDataSection - data section assembly (atomized from GenWasm.sir, Stage B debt; Stage D: runtime-owned segments merged before user literals)
+
+    Include
+        Path: ../PushAll/PushAll.sir
+        Module: PushAll
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitDataSection
+        Params: strOrder, strMap, rtDatas, dataBase, singBase
+        Returns: dataSec
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: strOrder
+            Returns: ns
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: rtDatas
+            Returns: nrt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: nrt, ns
+            Returns: nd0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1
+            Returns: oneSeg
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: nd0, oneSeg
+            Returns: nd
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, nd
+            Returns: dataPayload
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: ri
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: ri, nrt
+            Returns: contr
+
+        Loop
+            Condition: contr
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: rtDatas, ri
+                    Returns: rseg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: rseg, "off"
+                    Returns: roff
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: rseg, "bytes"
+                    Returns: rbytes
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: rbytes
+                    Returns: rbl
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitSignedLEB, roff
+                    Returns: rlebOff
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, rbl
+                    Returns: rlebLen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 0, 65
+                    Returns: rseg0
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: rseg0, rlebOff
+                    Returns: rseg1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 11
+                    Returns: rsegMid
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: rseg1, rsegMid
+                    Returns: rseg2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: rseg2, rlebLen
+                    Returns: rseg3
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: rseg3, rbytes
+                    Returns: rseg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushAll, dataPayload, rseg
+                    Returns: dataPayload
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: ri, 1
+                    Returns: ri
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: ri, nrt
+                    Returns: contr
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: j
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: j, ns
+            Returns: contd
+
+        Loop
+            Condition: contd
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: strOrder, j
+                    Returns: ds
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: strMap, ds
+                    Returns: dentry
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: dentry, 0
+                    Returns: doff
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: dentry, 1
+                    Returns: dln
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: StrBytes, ds
+                    Returns: dbyts
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitSignedLEB, doff
+                    Returns: lebOff
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, dln
+                    Returns: lebLen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 0, 65
+                    Returns: seg0
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: seg0, lebOff
+                    Returns: seg1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 11
+                    Returns: segMid
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: seg1, segMid
+                    Returns: seg2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: seg2, lebLen
+                    Returns: seg3
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: seg3, dbyts
+                    Returns: seg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushAll, dataPayload, seg
+                    Returns: dataPayload
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: j, 1
+                    Returns: j
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: j, ns
+                    Returns: contd
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 0, 65
+            Returns: sing0
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSignedLEB, singBase
+            Returns: singLeb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: sing0, singLeb
+            Returns: sing1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 11
+            Returns: singMid
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: sing1, singMid
+            Returns: sing2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 4128
+            Returns: singLen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, singLen
+            Returns: singLebLen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: sing2, singLebLen
+            Returns: sing2b
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            Returns: singFalse
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: sing2b, singFalse
+            Returns: sing3
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+            Returns: singTrue
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: sing3, singTrue
+            Returns: singSeg
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: gi2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 256
+            Returns: g256
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: gi2, g256
+            Returns: contq
+        Loop
+            Condition: contq
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 0, 0, 0, 0, 0, 0, 0, 0
+                    Returns: qtag
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: gi2, 0, 0, 0, 0, 0, 0, 0
+                    Returns: qpay
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: qtag, qpay
+                    Returns: qrow
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushAll, singSeg, qrow
+                    Returns: singSeg
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: gi2, 1
+                    Returns: gi2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: gi2, g256
+                    Returns: contq
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: PushAll, dataPayload, singSeg
+            Returns: dataPayload
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSection, 11, dataPayload
+            Returns: dataSec
+
+        Result
+            Type: Result
+            Role: Content
+            Returns: dataSec

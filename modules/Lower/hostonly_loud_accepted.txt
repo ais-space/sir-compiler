@@ -1,0 +1,32 @@
+# host-only ops with PROVEN loud refusal.
+# Single source of truth for spec_lint.py --strict (HOSTONLY).
+# Proven by behavioral sweep 2026-09-29 (27 refuse via R16.2 hook) +
+# tests/test_hostonly_loud.py; 6 others (BitAnd/BitOr/Eq/IntDiv/ShiftL/ShiftR)
+# lower via MapOp/prelude and are NOT listed here.
+# One op per line; # lines are comments. Exact-set match enforced.
+Abs
+BitXor
+Ceil
+Clamp
+Floor
+IsBool
+IsMap
+IsNull
+IsNum
+IsStr
+Max
+Min
+Pow
+Product
+Range
+Round
+Sign
+Sqrt
+StrContains
+StrEndsWith
+StrJoin
+StrLower
+StrReplace
+StrStartsWith
+StrUpper
+Sum

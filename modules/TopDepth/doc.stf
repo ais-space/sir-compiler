@@ -1,0 +1,8 @@
+TopDepthModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Returns the depth field of the top stack frame (indent depth of the current block). Parser stack utility.
+    Provides: TopDepth(stack) -> d.
+    DependsOn: none (leaf with no dependencies on other modules)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../TopDepth/TopDepth.sir).

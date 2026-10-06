@@ -1,0 +1,9 @@
+ReachesModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: CFG reachability analysis — whether block target is reachable from block bid by traversing terminators (Jump/Return/Branch) and the next-in-order block. Returns 1/0.
+    Provides: Reaches(state, bid, target, seen) -> res. state — emitter state (reads "bm" block-map); bid/target — block ids; seen — accumulated path (cycle guard); returns 1 if target is reachable from bid, else 0.
+    DependsOn: InList (cycle guard over seen), NextInOrder (step to next block), Reaches recursion.
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../Reaches/Reaches.sir).
+    Notes: traversal over terminators: Jump→target; Return→none; Branch→both branches; otherwise→NextInOrder. Used by IsLoopHeader and CommonJoin to detect back edges and common join points.

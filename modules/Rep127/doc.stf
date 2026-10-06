@@ -1,0 +1,9 @@
+Rep127ModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Builds a list of n repetitions of byte 127 (0x7F). Used for padding the WASM code section to alignment.
+    Provides: Rep127(n) -> res. n — Int (repeat count); returns a list of n bytes 127.
+    DependsOn: none (leaf; Core.List/ListPush/Sub/Gt, Loop).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../Rep127/Rep127.sir).
+    Notes: 0x7F — valid WASM padding byte ("else"/nop opcode); applied in GenWasm when forming the code section.

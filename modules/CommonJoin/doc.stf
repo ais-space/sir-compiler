@@ -1,0 +1,12 @@
+CommonJoinModuleDoc
+    Version: 2
+    Language: en
+    Format: STF
+    Purpose: For a Branch terminator computes the NEAREST common branch-join point via deterministic-exit chains: both branches unfold into ordered block chains (TermChain), from which the common aligned tail is taken (Converge); its head is the join. If the chains are indeterminable (empty terminator, loop deeper than 64, divergence with no common point) — join=null and EmitBlock falls back to the historic linear linearization.
+    Provides
+        Item: CommonJoin(state, term) -> res — id of the nearest join point or null.
+        Item: TermChain(bm, bid, depth) -> {ok, chain} — block exit chain: Jump — continue, Return — stop on self, Branch with loop flag — false arm only (loop exit; back edge ignored), plain Branch — merge of arm chains via Converge, anything else — ok=0.
+        Item: Converge(ca, cb) -> {ok, tail} — first element of ca found in cb with matching tails; returns the common tail (head = join point). Stops with ok=0 at the first common element without tail match.
+    DependsOn: IndexOf (element search), TermChain recursion (depth capped at 64 by its own guard).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../CommonJoin/CommonJoin.sir). Converge, ChainBuild, ComputeChains, TermChain and CommonJoin are colocated in one file (FwdReach/FallbackJoin live in JoinFallback).
+    Notes: The former CommonJoin↔TerminalJump pair stopped at the FIRST inner join of a nested branch (tt≠ft → join=null) — on composite CFGs (e.g. sir_print_i64: flat branch to the Return block vs branch with nested if+loop) this yielded join=null, linear inline emission of the continuation into the first branch only, and invalid wasm "expected 1 elements on stack for fallthru". The chain algorithm finds the actual nearest convergence point and yields structural emission block{if..else..}+join. Backward compatibility: for flat CFGs (both branches Jump to one block) the result is identical to the former one; byte output of existing green tests unchanged.

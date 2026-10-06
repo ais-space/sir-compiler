@@ -1,0 +1,240 @@
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR Standard Library - Result / Option
+
+    Function
+        Name: Ok
+        Params: v
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "tag", "ok", "value", v
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Err
+        Params: msg
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "tag", "err", "value", msg
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: IsOk
+        Params: r
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: r, "tag"
+            Returns: t
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: t, "ok"
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: IsErr
+        Params: r
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: IsOk, r
+            Returns: ok
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Not
+            Params: ok
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Unwrap
+        Params: r, def
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: IsOk, r
+            Returns: ok
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: ok
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: r, "value"
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: def
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: MapResult
+        Params: fn, r
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: IsOk, r
+            Returns: ok
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: ok
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: r, "value"
+                    Returns: v
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: fn, v
+                    Returns: v2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Ok, v2
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: r
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: AndThen
+        Params: fn, r
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: IsOk, r
+            Returns: ok
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: ok
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: r, "value"
+                    Returns: v
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: fn, v
+                    Returns: v2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Ok, v2
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: r
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: OrElse
+        Params: def, r
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: IsOk, r
+            Returns: ok
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: ok
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: r, "value"
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: def
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

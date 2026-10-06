@@ -1,0 +1,9 @@
+EmitU32LEBModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Encodes an unsigned integer into LEB128 (Little-Endian Base-128) and returns the byte list. Fundamental primitive for WASM section sizes, indexes, and counters.
+    Provides: EmitU32LEB(n) -> out. n — non-negative Int; returns the LEB128 byte list (no state write).
+    DependsOn: none (leaf; Core arithmetic and ListPush).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitU32LEB/EmitU32LEB.sir).
+    Notes: used together with Push/PushList for appends; returns bytes separately so the caller can splice them in the needed order (e.g. in EmitSection — length first, then body).

@@ -1,0 +1,338 @@
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR Standard Library - Strings
+
+    Function
+        Name: SplitLines
+        Params: s
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Chr
+            Params: 10
+            Returns: nl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrSplit
+            Params: s, nl
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: JoinLines
+        Params: list
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Chr
+            Params: 10
+            Returns: nl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrJoin
+            Params: list, nl
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Words
+        Params: s
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrSplit
+            Params: s, " "
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Slice
+        Params: s, a, b
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sub
+            Params: b, a
+            Returns: len
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrSub
+            Params: s, a, len
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: Capitalize
+        Params: s
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrLen
+            Params: s
+            Returns: slen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sub
+            Params: slen, 1
+            Returns: rest
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrSub
+            Params: s, 0, 1
+            Returns: first
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrUpper
+            Params: first
+            Returns: fup
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrSub
+            Params: s, 1, rest
+            Returns: tail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: fup, tail
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: PadStart
+        Params: s, width, ch
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrLen
+            Params: s
+            Returns: slen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: slen, width
+            Returns: cond
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: ch, s
+                    Returns: s
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrLen
+                    Params: s
+                    Returns: slen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: slen, width
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: s
+
+    Function
+        Name: RepeatStr
+        Params: s, n
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, n
+            Returns: cond
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: ""
+            Returns: acc
+        Loop
+            Type: Loop
+            Role: Content
+            Condition: cond
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: acc, s
+                    Returns: acc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, n
+                    Returns: cond
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: acc
+
+    Function
+        Name: Truncate
+        Params: s, n
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrLen
+            Params: s
+            Returns: slen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Gt
+            Params: slen, n
+            Returns: tooLong
+        Branch
+            Type: Branch
+            Role: Content
+            Condition: tooLong
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrSub
+                    Params: s, 0, n
+                    Returns: head
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: head, "..."
+                    Returns: out
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: s
+                    Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: StartsWith
+        Params: s, pre
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrStartsWith
+            Params: s, pre
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: EndsWith
+        Params: s, suf
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrEndsWith
+            Params: s, suf
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: ContainsStr
+        Params: s, sub
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrContains
+            Params: s, sub
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Name: ReplaceStr
+        Params: s, old, new
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrReplace
+            Params: s, old, new
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

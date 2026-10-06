@@ -1,0 +1,649 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ParseWasm (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ParseWasm
+        Params: data
+        Returns: rt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 8
+            Returns: pos
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: types
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: impmod
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: impname
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: imptype
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: helper_types
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: bodies
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: data
+            Returns: dlen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: pos, dlen
+            Returns: cont
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: data, pos
+                    Returns: sid
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: pos, 1
+                    Returns: pos
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: ReadLEB, data, pos
+                    Returns: t
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: t, 0
+                    Returns: size
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: t, 1
+                    Returns: pos
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: pos, size
+                    Returns: end
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: sid, 1
+                    Returns: is1
+                Branch
+                    Condition: is1
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: ReadLEB, data, pos
+                            Returns: t1
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: t1, 0
+                            Returns: cnt
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: t1, 1
+                            Returns: pos
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: i
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: i, cnt
+                            Returns: cont
+                        Loop
+                            Condition: cont
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: data, pos
+                                    Returns: form
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: pos, 1
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: ReadLEB, data, pos
+                                    Returns: t2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t2, 0
+                                    Returns: nparams
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t2, 1
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Slice, data, pos, nparams
+                                    Returns: params
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: pos, nparams
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: ReadLEB, data, pos
+                                    Returns: t3
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t3, 0
+                                    Returns: nres
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t3, 1
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Slice, data, pos, nres
+                                    Returns: res
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: pos, nres
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.List
+                                    Params: 96, nparams
+                                    Returns: entry
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 0
+                                    Returns: k
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: k, nparams
+                                    Returns: contp
+                                Loop
+                                    Condition: contp
+                                    Body
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListGet
+                                            Params: params, k
+                                            Returns: pk
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListPush
+                                            Params: entry, pk
+                                            Returns: entry
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Add
+                                            Params: k, 1
+                                            Returns: k
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lt
+                                            Params: k, nparams
+                                            Returns: contp
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListPush
+                                    Params: entry, nres
+                                    Returns: entry
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 0
+                                    Returns: k
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: k, nres
+                                    Returns: contr
+                                Loop
+                                    Condition: contr
+                                    Body
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListGet
+                                            Params: res, k
+                                            Returns: rk
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListPush
+                                            Params: entry, rk
+                                            Returns: entry
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Add
+                                            Params: k, 1
+                                            Returns: k
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lt
+                                            Params: k, nres
+                                            Returns: contr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListPush
+                                    Params: types, entry
+                                    Returns: types
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: i, 1
+                                    Returns: i
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: i, cnt
+                                    Returns: cont
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: sid, 2
+                            Returns: is2
+                        Branch
+                            Condition: is2
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: ReadLEB, data, pos
+                                    Returns: t1
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t1, 0
+                                    Returns: cnt
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t1, 1
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: ReadLEB, data, pos
+                                    Returns: t2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t2, 0
+                                    Returns: mlen
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t2, 1
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Slice, data, pos, mlen
+                                    Returns: impmod
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: pos, mlen
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: ReadLEB, data, pos
+                                    Returns: t3
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t3, 0
+                                    Returns: nlen
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t3, 1
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: Slice, data, pos, nlen
+                                    Returns: impname
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: pos, nlen
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: data, pos
+                                    Returns: kind
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: pos, 1
+                                    Returns: pos
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: ReadLEB, data, pos
+                                    Returns: t4
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t4, 0
+                                    Returns: imptype
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: t4, 1
+                                    Returns: pos
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: sid, 3
+                                    Returns: is3
+                                Branch
+                                    Condition: is3
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: ReadLEB, data, pos
+                                            Returns: t1
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListGet
+                                            Params: t1, 0
+                                            Returns: cnt
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListGet
+                                            Params: t1, 1
+                                            Returns: pos
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 0
+                                            Returns: i
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lt
+                                            Params: i, cnt
+                                            Returns: cont
+                                        Loop
+                                            Condition: cont
+                                            Body
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: ReadLEB, data, pos
+                                                    Returns: t2
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: t2, 0
+                                                    Returns: tv
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: t2, 1
+                                                    Returns: pos
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListPush
+                                                    Params: helper_types, tv
+                                                    Returns: helper_types
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Add
+                                                    Params: i, 1
+                                                    Returns: i
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Lt
+                                                    Params: i, cnt
+                                                    Returns: cont
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Eq
+                                            Params: sid, 10
+                                            Returns: is10
+                                        Branch
+                                            Condition: is10
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Ctrl.Call
+                                                    Params: ReadLEB, data, pos
+                                                    Returns: t1
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: t1, 0
+                                                    Returns: cnt
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: t1, 1
+                                                    Returns: pos
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Lit
+                                                    Params: 0
+                                                    Returns: i
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Lt
+                                                    Params: i, cnt
+                                                    Returns: cont
+                                                Loop
+                                                    Condition: cont
+                                                    Body
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Ctrl.Call
+                                                            Params: ReadLEB, data, pos
+                                                            Returns: t2
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.ListGet
+                                                            Params: t2, 0
+                                                            Returns: bsize
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.ListGet
+                                                            Params: t2, 1
+                                                            Returns: pos
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Ctrl.Call
+                                                            Params: Slice, data, pos, bsize
+                                                            Returns: body
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Add
+                                                            Params: pos, bsize
+                                                            Returns: pos
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.ListPush
+                                                            Params: bodies, body
+                                                            Returns: bodies
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Add
+                                                            Params: i, 1
+                                                            Returns: i
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Lt
+                                                            Params: i, cnt
+                                                            Returns: cont
+                                            FalseBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Lit
+                                                    Params: 0
+                                                    Returns: skip
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: end
+                    Returns: pos
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: pos, dlen
+                    Returns: cont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "types", types, "impmod", impmod, "impname", impname, "imptype", imptype, "helper_types", helper_types, "bodies", bodies
+            Returns: rt
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: rt

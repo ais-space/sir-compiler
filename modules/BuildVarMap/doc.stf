@@ -1,0 +1,9 @@
+BuildVarMapModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Builds a variable to local-index map (sequentially, starting at 0) by recursive traversal of the variable list.
+    Provides: BuildVarMap(vars, i, m) -> m. vars — variable name list; i — index; m — accumulated map; returns map var-to-local-index.
+    DependsOn: BuildVarMap recursion (leaf; Core.MapSet/Add).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../BuildVarMap/BuildVarMap.sir).
+    Notes: yields state["v2l"], which EmitOperand uses to resolve operand local indexes.

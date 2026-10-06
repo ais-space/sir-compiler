@@ -1,0 +1,279 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitBlock — WASM block emission dispatcher (atomic module)
+
+    Include
+        Path: ../EmitBlockGuard/EmitBlockGuard.sir
+    Include
+        Path: ../EmitReturn/EmitReturn.sir
+    Include
+        Path: ../EmitJump/EmitJump.sir
+    Include
+        Path: ../EmitLoopExit/EmitLoopExit.sir
+    Include
+        Path: ../EmitBranchJoin/EmitBranchJoin.sir
+    Include
+        Path: ../EmitNext/EmitNext.sir
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitBlock
+        Params: state, bid
+        Returns: state
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitBlockGuard, state, bid
+            Returns: guard
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: guard, "skip"
+            Returns: skip
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: guard, "state"
+            Returns: state
+        Branch
+            Condition: skip
+            TrueBlock
+            FalseBlock
+                Type: FalseBlock
+                Role: Content
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: state, "bm"
+                    Returns: bm
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: bm, bid
+                    Returns: b
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: b, null
+                    Returns: bnull
+                Branch
+                    Condition: bnull
+                    TrueBlock
+                    FalseBlock
+                        Type: FalseBlock
+                        Role: Content
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: state, "emitted"
+                            Returns: em
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: em, bid
+                            Returns: em2
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: state, "emitted", em2
+                            Returns: state
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: b, "term"
+                            Returns: term
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: term, "op"
+                            Returns: op
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: done
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "Return"
+                            Returns: cR
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: done, 0
+                            Returns: d0
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: cR, d0
+                            Returns: take
+                        Branch
+                            Condition: take
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: EmitReturn, state, b, term
+                                    Returns: state
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: done
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "Branch"
+                            Returns: cB
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: done, 0
+                            Returns: d1
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: cB, d1
+                            Returns: take
+                        Branch
+                            Condition: take
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: IsLoopHeader, state, b
+                                    Returns: lh
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: lh, "loop"
+                                    Returns: isLoop
+                                Branch
+                                    Condition: isLoop
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: lh, "body"
+                                            Returns: bodyId
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: lh, "exit"
+                                            Returns: exitId
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: EmitLoopExit, state, b, term, bodyId, exitId, bid
+                                            Returns: state
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: done
+                                Branch
+                                    Condition: isLoop
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: CommonJoin, state, term
+                                            Returns: join
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Ctrl.Call
+                                            Params: EmitBranchJoin, state, b, term, join
+                                            Returns: state
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 1
+                                            Returns: done
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: op, "Jump"
+                            Returns: cJ
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: done, 0
+                            Returns: d2
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: cJ, d2
+                            Returns: take
+                        Branch
+                            Condition: take
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Ctrl.Call
+                                    Params: EmitJump, state, b, term
+                                    Returns: state
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 1
+                                    Returns: done
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: done, 0
+                    Returns: d3
+                Branch
+                    Condition: d3
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: EmitNext, state, b, bid
+                            Returns: state
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: state

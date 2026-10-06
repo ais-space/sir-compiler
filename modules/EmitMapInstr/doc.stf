@@ -1,0 +1,10 @@
+EmitMapInstrModuleDoc
+    Version: 2
+    Language: en
+    Format: STF
+    Purpose: Emission of stage-C map operations. IR.MapMake: empty map sir_map_make #39 (no arguments), then threading dst with key/value pairs through sir_map_set #41 with local reassignment (interim: helper mutates the container and returns it back — divergence from pure §6.7 semantics documented in the plan, Phase 8 unification); IR.MapGet #40 / MapSet #41 / MapKeys #42 — direct calls; at dst=null the result is dropped, the constructor without dst preserves operand effects. Pairs read with step 2. Self-filtering by operation name; done written to state only on match.
+    Provides
+        Item: EmitMapInstr(state, ins) -> state
+    DependsOn: EmitOperand, Push, PushList, EmitU32LEB.
+    Composition: Native Include from modules/GenWasm/GenWasm.sir; hook from EmitInstr after EmitStringInstr/EmitMemInstr.
+    Notes: guard-Branch structure; single bytes — bare Push without PushList; loop conditions — Core.* only; string keys/values — via variables only (Core.Lit).

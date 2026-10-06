@@ -1,0 +1,10 @@
+constModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Box constructors for primitive values.
+    Provides: sir_const_i64(v) -> out Boxes a raw i64.
+    Provides: sir_const_bool(v) -> out Boxes nonzero as Boolean.
+    Provides: sir_const_null() -> out The Null singleton.
+    Provides: sir_const_err(s) -> out Boxes an Error.
+    Provides: sir_const_f64(bits) -> out Boxes an f64 payload.

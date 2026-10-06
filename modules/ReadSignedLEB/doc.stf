@@ -1,0 +1,10 @@
+ReadSignedLEBModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Signed LEB128 read (two's complement): read_leb_s algorithm. Reads bytes with the high continuation bit set; on the terminating byte, when bit 0x40 is set, applies sign extension result -= 1 << shift.
+    Provides
+        Item: ReadSignedLEB(data, pos) -> [value, newPos] — value and new position.
+    DependsOn: none (Core.* only).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir.
+    Notes: Added in Stage D for parsing offset expressions of data segments in section 11 (offsets >63 are encoded as signed LEB, unsigned ReadLEB cannot read them). py (read_leb_s).

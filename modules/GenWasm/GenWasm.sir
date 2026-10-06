@@ -1,0 +1,2117 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: GenWasm - WASM backend emitter (aggregator, Phase 5 Stage 7-8)
+
+    Include
+        Path: ../Push/Push.sir
+        Module: Push
+    Include
+        Path: ../PushAll/PushAll.sir
+        Module: PushAll
+    Include
+        Path: ../PushList/PushList.sir
+        Module: PushList
+    Include
+        Path: ../EmitU32LEB/EmitU32LEB.sir
+        Module: EmitU32LEB
+    Include
+        Path: ../EmitBitUnbox/EmitBitUnbox.sir
+        Module: EmitBitUnbox
+    Include
+        Path: ../EmitBitBox/EmitBitBox.sir
+        Module: EmitBitBox
+    Include
+        Path: ../EmitSignedLEB/EmitSignedLEB.sir
+        Module: EmitSignedLEB
+    Include
+        Path: ../InList/InList.sir
+        Module: InList
+    Include
+        Path: ../Rep127/Rep127.sir
+        Module: Rep127
+    Include
+        Path: ../Flatten/Flatten.sir
+        Module: Flatten
+    Include
+        Path: ../EmitSection/EmitSection.sir
+        Module: EmitSection
+    Include
+        Path: ../EmitName/EmitName.sir
+        Module: EmitName
+    Include
+        Path: ../Reaches/Reaches.sir
+        Module: Reaches
+    Include
+        Path: ../EmitOperand/EmitOperand.sir
+        Module: EmitOperand
+    Include
+        Path: ../EmitFuncBody/EmitFuncBody.sir
+        Module: EmitFuncBody
+    Include
+        Path: ../PromoteStrConsts/PromoteStrConsts.sir
+        Module: PromoteStrConsts
+    Include
+        Path: ../ParseWasm/ParseWasm.sir
+        Module: ParseWasm
+
+    Include
+        Path: ../ParseDataSegments/ParseDataSegments.sir
+        Module: ParseDataSegments
+
+    Include
+        Path: ../ReadSignedLEB/ReadSignedLEB.sir
+        Module: ReadSignedLEB
+    Include
+        Path: ../NextInOrder/NextInOrder.sir
+        Module: NextInOrder
+    Include
+        Path: ../EmitInstr/EmitInstr.sir
+        Module: EmitInstr
+    Include
+        Path: ../CommonJoin/CommonJoin.sir
+        Module: CommonJoin
+    Include
+        Path: ../JoinFallback/JoinFallback.sir
+        Module: JoinFallback
+
+    Include
+        Path: ../HasErrorOps/HasErrorOps.sir
+        Module: HasErrorOps
+
+    Include
+        Path: ../PathOpenInstr/PathOpenInstr.sir
+        Module: PathOpenInstr
+
+    Include
+        Path: ../FdCloseInstr/FdCloseInstr.sir
+        Module: FdCloseInstr
+
+    Include
+        Path: ../IsCollectionOp/IsCollectionOp.sir
+        Module: IsCollectionOp
+
+    Include
+        Path: ../EmitListInstr/EmitListInstr.sir
+        Module: EmitListInstr
+
+    Include
+        Path: ../EmitMapInstr/EmitMapInstr.sir
+        Module: EmitMapInstr
+
+    Include
+        Path: ../BuildBlockMap/BuildBlockMap.sir
+        Module: BuildBlockMap
+
+    Include
+        Path: ../BuildVarMap/BuildVarMap.sir
+        Module: BuildVarMap
+
+    Include
+        Path: ../CollectVars/CollectVars.sir
+        Module: CollectVars
+
+    Include
+        Path: ../VarsMinus/VarsMinus.sir
+        Module: VarsMinus
+
+    Include
+        Path: ../EmitBlock/EmitBlock.sir
+        Module: EmitBlock
+
+    Include
+        Path: ../EmitInstrs/EmitInstrs.sir
+        Module: EmitInstrs
+
+    Include
+        Path: ../IsLoopHeader/IsLoopHeader.sir
+        Module: IsLoopHeader
+
+    Include
+        Path: ../EmitCond/EmitCond.sir
+        Module: EmitCond
+
+    Include
+        Path: ../FindDepth/FindDepth.sir
+        Module: FindDepth
+
+    Include
+        Path: ../EmitCallArgs/EmitCallArgs.sir
+        Module: EmitCallArgs
+
+    Include
+        Path: ../ReadLEB/ReadLEB.sir
+        Module: ReadLEB
+
+    Include
+        Path: ../Slice/Slice.sir
+        Module: Slice
+
+    Include
+        Path: ../IndexOf/IndexOf.sir
+        Module: IndexOf
+    Include
+        Path: ../StrBytes/StrBytes.sir
+        Module: StrBytes
+    Include
+        Path: ../CollectStr/CollectStr.sir
+        Module: CollectStr
+    Include
+        Path: ../EmitStringInstr/EmitStringInstr.sir
+        Module: EmitStringInstr
+    Include
+        Path: ../EmitDataSection/EmitDataSection.sir
+        Module: EmitDataSection
+    Include
+        Path: ../EmitWasmMemCore/EmitWasmMemCore.sir
+        Module: EmitWasmMemCore
+    Include
+        Path: ../EmitWasiFileInstr/EmitWasiFileInstr.sir
+        Module: EmitWasiFileInstr
+    Include
+        Path: ../EmitRawIntInstr/EmitRawIntInstr.sir
+        Module: EmitRawIntInstr
+    Include
+        Path: ../EmitFloatInstr/EmitFloatInstr.sir
+        Module: EmitFloatInstr
+    Include
+        Path: ../EmitMemInstr/EmitMemInstr.sir
+        Module: EmitMemInstr
+    Function
+        Type: Function
+        Role: Content
+        Name: GenWasm
+        Params: ir, rt
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: rt
+            Returns: rawRt
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: ParseDataSegments, rawRt
+            Returns: rtDatas
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: DataBaseOf, rtDatas
+            Returns: dataBase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: ParseWasm, rt
+            Returns: rt
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ir, "functions"
+            Returns: funcs
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: funcs
+            Returns: nProm
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: pi
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: pi, nProm
+            Returns: pcont
+
+        Loop
+            Condition: pcont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: funcs, pi
+                    Returns: pf
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListSet
+                    Params: funcs, pi, pf
+                    Returns: funcs
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: pi, 1
+                    Returns: pi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: pi, nProm
+                    Returns: pcont
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: ir, "functions", funcs
+            Returns: ir
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: ni
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: funcs
+            Returns: nn
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: ni, nn
+            Returns: ncont
+        Loop
+            Condition: ncont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: funcs, ni
+                    Returns: nf
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: nf, "name"
+                    Returns: nfn
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: nfn, null
+                    Returns: nnull
+                Branch
+                    Condition: nnull
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: "@anon"
+                            Returns: naname
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSet
+                            Params: nf, "name", naname
+                            Returns: nf
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListSet
+                            Params: funcs, ni, nf
+                            Returns: funcs
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: nf
+                            Returns: nf
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: ni, 1
+                    Returns: ni
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: ni, nn
+                    Returns: ncont
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: CollectStr, ir, dataBase
+            Returns: strInfo
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: strInfo, "order"
+            Returns: strOrder
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: strInfo, "map"
+            Returns: strMap
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ir, "entry"
+            Returns: entry
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ir, "trace"
+            Returns: tflag
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: tflag, 1
+            Returns: tracing
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ir, "trace_only"
+            Returns: tonly
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: rt, "types"
+            Returns: types
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: rt, "impmod"
+            Returns: impmod
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: rt, "impname"
+            Returns: impname
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: rt, "imptype"
+            Returns: imptype
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: rt, "helper_types"
+            Returns: helper_types
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: rt, "bodies"
+            Returns: bodies
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "IR.Add", 8, "IR.Sub", 9, "IR.Mul", 10, "IR.Div", 11, "IR.Mod", 12, "IR.Equ", 14, "IR.Lt", 15, "IR.Gt", 16, "IR.Le", 47, "IR.Ge", 48, "IR.Ne", 49, "IR.And", 17, "IR.Or", 18, "IR.StrConcat", 26, "IR.StrFind", 29, "IR.StrCount", 30, "IR.StrEq", 31, "IR.StrIdx", 28, "IR.StrSplit", 53
+            Returns: binMap
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+             Params: "IR.Neg", 13, "IR.Not", 19, "IR.StrLen", 25, "IR.NumToStr", 32, "IR.StrParse", 33, "IR.TypeOf", 50, "IR.Chr", 51, "IR.Ord", 52, "IR.StrTrim", 54, "IR.Sort", 55, "IR.IsList", 58, "IR.StrJoinParts", 63
+            Returns: unMap
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+             Params: "IR.WAdd", 124, "IR.WSub", 125, "IR.WMul", 126, "IR.WDivS", 127, "IR.WDivU", 128, "IR.WRemS", 129, "IR.WRemU", 130, "IR.WShl", 134, "IR.WShrS", 135, "IR.WShrU", 136
+            Returns: wbin
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "IR.WEq", 81, "IR.WNe", 82, "IR.WLtS", 83, "IR.WLtU", 84, "IR.WGtS", 85, "IR.WGtU", 86, "IR.WLeS", 87, "IR.WLeU", 88, "IR.WGeS", 89, "IR.WGeU", 90
+            Returns: wcmp
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "IR.WAnd", 113, "IR.WOr", 114
+            Returns: wbit
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+             Params: "alloc", 4, "sir_const_i64", 5, "sir_const_bool", 6, "sir_const_null", 7, "sir_add", 8, "sir_sub", 9, "sir_mul", 10, "sir_div", 11, "sir_mod", 12, "sir_neg", 13, "sir_equ", 14, "sir_lt", 15, "sir_gt", 16, "sir_and", 17, "sir_or", 18, "sir_not", 19, "sir_make_list", 20, "sir_list_get", 21, "sir_list_set", 22, "sir_print_i64", 23, "sir_const_str", 24, "sir_str_len", 25, "sir_str_concat", 26, "sir_str_sub", 27, "sir_str_idx", 28, "sir_str_find", 29, "sir_str_count", 30, "sir_str_eq", 31, "sir_num_to_str", 32, "sir_str_parse", 33, "sir_read_str", 34, "sir_print_val", 35, "sir_list_len", 36, "sir_list_push", 37, "sir_list_concat", 38, "sir_map_make", 39, "sir_map_get", 40, "sir_map_set", 41, "sir_map_keys", 42, "sir_read_file", 43, "sir_const_err", 44, "sir_list_append", 45, "sir_map_set_inplace", 46, "sir_le", 47, "sir_ge", 48, "sir_ne", 49, "sir_typeof", 50, "sir_chr", 51, "sir_ord", 52, "sir_str_split", 53, "sir_str_trim", 54, "sir_sort", 55, "sir_str_lt", 56, "sir_split_first_line", 57, "sir_is_list", 58, "sir_list_pop", 59, "sir_list_push_mut", 60, "sir_list_set_mut", 61, "sir_map_set_mut", 62, "sir_str_join_parts", 63, "sir_const_f64", 64, "sir_parse_float", 65, "sir_num_to_str_float", 66, "sir_log", 67, "alloc_traced", 68, "map_traced_alloc", 69, "str_traced_alloc", 70, "list_traced_alloc", 71, "const_traced_alloc", 72, "io_traced_alloc", 73, "extra_traced_alloc", 74, "io_read_traced_alloc", 75, "io_print_traced_alloc", 76
+            Returns: helperIdx
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: types
+            Returns: ntypes
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: helper_types
+            Returns: nhelpers
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: funcs
+            Returns: FL
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: user_types
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params:
+            Returns: fti
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params:
+            Returns: ufi
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, FL
+            Returns: cont
+
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: funcs, i
+                    Returns: f
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: f, "name"
+                    Returns: fname
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: fname, null
+                    Returns: fnNull
+                Branch
+                    Condition: fnNull
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: "@anon"
+                            Returns: fname
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: fname
+                            Returns: fname
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: f, "params"
+                    Returns: fparams
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: fparams
+                    Returns: np
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 96, np
+                    Returns: base
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: Rep127, np
+                    Returns: reps
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Params: 1, 126
+                    Returns: tail
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: base, reps
+                    Returns: t1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListConcat
+                    Params: t1, tail
+                    Returns: t
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: user_types, t
+                    Returns: user_types
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: ntypes, i
+                    Returns: ti
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: fti, fname, ti
+                    Returns: fti
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: 4, nhelpers
+                    Returns: base2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: base2, i
+                    Returns: fi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSet
+                    Params: ufi, fname, fi
+                    Returns: ufi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, FL
+                    Returns: cont
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: types, user_types
+            Returns: all_types
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: all_types
+            Returns: atL
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, atL
+            Returns: atLen
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: atLen
+            Returns: atHead
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: Flatten, all_types
+            Returns: atFlat
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: atHead, atFlat
+            Returns: typePayload
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSection, 1, typePayload
+            Returns: typeSec
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: ftidxs
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, FL
+            Returns: cont
+
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: funcs, i
+                    Returns: f
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: f, "name"
+                    Returns: fname
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: fti, fname
+                    Returns: ti
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: ftidxs, ti
+                    Returns: ftidxs
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, FL
+                    Returns: cont
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: helper_types, ftidxs
+            Returns: func_typeidxs
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: func_typeidxs
+            Returns: ftiL
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, ftiL
+            Returns: ftiLen
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: ftiLen
+            Returns: ftiHead
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: ftiFlat
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, ftiL
+            Returns: cont
+
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: func_typeidxs, i
+                    Returns: ti
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, ti
+                    Returns: leb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushAll, ftiFlat, leb
+                    Returns: ftiFlat
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, ftiL
+                    Returns: cont
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: ftiHead, ftiFlat
+            Returns: funcPayload
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSection, 3, funcPayload
+            Returns: funcSec
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 1, 0, 128, 2
+            Returns: memPayload
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSection, 5, memPayload
+            Returns: memSec
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: dataBase
+            Returns: soff
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: strOrder
+            Returns: nStr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: gi
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: gi, nStr
+            Returns: gcont
+        Loop
+            Condition: gcont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: strOrder, gi
+                    Returns: gs
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: StrBytes, gs
+                    Returns: gb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: gb
+                    Returns: gln
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: gln, 3
+                    Returns: gt1
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Div
+                    Params: gt1, 4
+                    Returns: gt2
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Mul
+                    Params: gt2, 4
+                    Returns: galigned
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: soff, galigned
+                    Returns: soff
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: gi, 1
+                    Returns: gi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: gi, nStr
+                    Returns: gcont
+        Branch
+            Condition: tracing
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: soff
+                    Returns: tbase
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: soff, 16
+                    Returns: soff
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: soff
+                    Returns: vbase
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: soff, 40
+                    Returns: soff
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: null
+                    Returns: tbase
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: null
+                    Returns: vbase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: soff
+            Returns: singRaw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 15
+            Returns: a15
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: singRaw, a15
+            Returns: singTmp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Div
+            Params: singTmp, 16
+            Returns: singQ
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Mul
+            Params: singQ, 16
+            Returns: singBase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 4128
+            Returns: s4128
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: singBase, s4128
+            Returns: sEnd
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Gt
+            Params: sEnd, 1024
+            Returns: ggt2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 1024
+            Returns: g1024
+        Branch
+            Condition: ggt2
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: sEnd
+                    Returns: heapBase
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: g1024
+                    Returns: heapBase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: heapBase, 15
+            Returns: heapTmp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Div
+            Params: heapTmp, 16
+            Returns: heapQ
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Mul
+            Params: heapQ, 16
+            Returns: heapAligned
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: heapAligned
+            Returns: heapBase
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 4
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 126
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 1
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 66
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSignedLEB, heapBase
+            Returns: gle
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: gPayload, gle
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 11
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 126
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 1
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 66
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 0
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 11
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 126
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 1
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 66
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 0
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 11
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 126
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 1
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 66
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSignedLEB, singBase
+            Returns: sgle
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: gPayload, sgle
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: gPayload, 11
+            Returns: gPayload
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSection, 6, gPayload
+            Returns: globalSec
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 4
+            Returns: impHead
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitName, impmod
+            Returns: n1
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: impHead, n1
+            Returns: imp1
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitName, impname
+            Returns: n2
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp1, n2
+            Returns: imp2
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 0
+            Returns: impMid
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp2, impMid
+            Returns: imp3
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, imptype
+            Returns: itLeb
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp3, itLeb
+            Returns: imp4
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitName, impmod
+            Returns: n3
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp4, n3
+            Returns: imp5
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 102, 100, 95, 114, 101, 97, 100
+            Returns: fdread
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitName, fdread
+            Returns: n4
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp5, n4
+            Returns: imp6
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 0
+            Returns: impMid2
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp6, impMid2
+            Returns: imp7
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, imptype
+            Returns: itLeb2
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp7, itLeb2
+            Returns: imp7b
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitName, impmod
+            Returns: n5
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp7b, n5
+            Returns: imp8
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 112, 97, 116, 104, 95, 111, 112, 101, 110
+            Returns: pathopen
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitName, pathopen
+            Returns: n6
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp8, n6
+            Returns: imp9
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 0, 1
+            Returns: impMid3
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp9, impMid3
+            Returns: imp10
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitName, impmod
+            Returns: n7
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp10, n7
+            Returns: imp11
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 102, 100, 95, 99, 108, 111, 115, 101
+            Returns: fdclose
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitName, fdclose
+            Returns: n8
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp11, n8
+            Returns: imp12
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 0, 2
+            Returns: impMid4
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: imp12, impMid4
+            Returns: impPayload
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSection, 2, impPayload
+            Returns: importSec
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 2
+            Returns: expHead
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 6, 109, 101, 109, 111, 114, 121
+            Returns: memName
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: expHead, memName
+            Returns: exp1
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 2, 0
+            Returns: expMid1
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: exp1, expMid1
+            Returns: exp2
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 6, 95, 115, 116, 97, 114, 116
+            Returns: startName
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: exp2, startName
+            Returns: exp3
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 0
+            Returns: expMid2
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: exp3, expMid2
+            Returns: exp4
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ufi, entry
+            Returns: eidx
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: eidx, null
+            Returns: eidxNull
+
+        Branch
+            Condition: eidxNull
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: funcs, 0
+                    Returns: f0
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: f0, "name"
+                    Returns: f0n
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: f0n, null
+                    Returns: f0nNull
+                Branch
+                    Condition: f0nNull
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: "@anon"
+                            Returns: f0n
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Id
+                            Params: f0n
+                            Returns: f0n
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: ufi, f0n
+                    Returns: eidx
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, eidx
+            Returns: eLeb
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: exp4, eLeb
+            Returns: expPayload
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSection, 7, expPayload
+            Returns: exportSec
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: code_bodies
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: bodies
+            Returns: nB
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: j
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: j, nB
+            Returns: contb
+
+        Loop
+            Condition: contb
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: bodies, j
+                    Returns: rbody
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: rbody
+                    Returns: rbl
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, rbl
+                    Returns: rblen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: code_bodies, rbody
+                    Returns: code_bodies
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: j, 1
+                    Returns: j
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: j, nB
+                    Returns: contb
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: tids
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, FL
+            Returns: cont
+
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: funcs, i
+                    Returns: f
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitFuncBody, f, ufi, binMap, unMap, strMap, wbin, wcmp, wbit, helperIdx, tbase, vbase, tids, tonly
+                    Returns: fbres
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: fbres, 0
+                    Returns: body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: fbres, 1
+                    Returns: tids
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPush
+                    Params: code_bodies, body
+                    Returns: code_bodies
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, FL
+                    Returns: cont
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: code_bodies
+            Returns: cbL
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitU32LEB, cbL
+            Returns: cbLen
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: cbLen
+            Returns: cbHead
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: i
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params:
+            Returns: cbFlat
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: i, cbL
+            Returns: cont
+
+        Loop
+            Condition: cont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: code_bodies, i
+                    Returns: body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: body
+                    Returns: bL
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: EmitU32LEB, bL
+                    Returns: bLen
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushAll, cbFlat, bLen
+                    Returns: cbFlat
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Ctrl.Call
+                    Params: PushAll, cbFlat, body
+                    Returns: cbFlat
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: i, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: i, cbL
+                    Returns: cont
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: cbHead, cbFlat
+            Returns: codePayload
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitSection, 10, codePayload
+            Returns: codeSec
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitDataSection, strOrder, strMap, rtDatas, dataBase, singBase
+            Returns: dataSec
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Params: 0, 97, 115, 109, 1, 0, 0, 0
+            Returns: H
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: H, typeSec
+            Returns: W1
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: W1, importSec
+            Returns: W2
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: W2, funcSec
+            Returns: W3
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: W3, memSec
+            Returns: W4
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: W4, globalSec
+            Returns: W5
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: W5, exportSec
+            Returns: W6
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: W6, codeSec
+            Returns: W7
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListConcat
+            Params: W7, dataSec
+            Returns: res
+        Branch
+            Condition: tracing
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Chr
+                    Params: 34
+                    Returns: mapQ
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Chr
+                    Params: 44
+                    Returns: mapComma
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: "{"
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, mapQ
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, "fd"
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, mapQ
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, ":3"
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, mapComma
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, mapQ
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, "ids"
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, mapQ
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, ":"
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, "["
+                    Returns: mapAcc
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: tids
+                    Returns: mapN
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 0
+                    Returns: mapI
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: mapI, mapN
+                    Returns: mapC
+                Loop
+                    Condition: mapC
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: tids, mapI
+                            Returns: mapP
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: mapI, 0
+                            Returns: mapFirst
+                        Branch
+                            Condition: mapFirst
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrConcat
+                                    Params: mapQ, mapP
+                                    Returns: mapC1
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrConcat
+                                    Params: mapC1, mapQ
+                                    Returns: mapChunk
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrConcat
+                                    Params: mapComma, mapQ
+                                    Returns: mapC1
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrConcat
+                                    Params: mapC1, mapP
+                                    Returns: mapC2
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.StrConcat
+                                    Params: mapC2, mapQ
+                                    Returns: mapChunk
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.StrConcat
+                            Params: mapAcc, mapChunk
+                            Returns: mapAcc
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Add
+                            Params: mapI, 1
+                            Returns: mapI
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: mapI, mapN
+                            Returns: mapC
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.StrConcat
+                    Params: mapAcc, "]}"
+                    Returns: mapJson
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Sys.Output
+                    Params: mapJson
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

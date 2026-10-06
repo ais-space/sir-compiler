@@ -1,0 +1,352 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: Lower (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: Lower
+        Params: ast
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ast, "children"
+            Returns: top
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: First Module child survives headers
+            Op: Ctrl.Call
+            Params: FindChild, ast, "Module"
+            Returns: modNode
+        Instruction
+            Type: Instruction
+            Role: Content
+            Caption: Absent marker means no Module child
+            Op: Core.Eq
+            Params: modNode, 0
+            Returns: modMissing
+        Branch
+            Type: Branch
+            Role: Content
+            Caption: Module child or legacy layout
+            Condition: modMissing
+            TrueBlock
+                Type: Section
+                Role: Content
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Legacy Root wrapper fallback
+                    Op: Ctrl.Call
+                    Params: FindChild, ast, "Root"
+                    Returns: rootNode
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Absent marker means no Root child
+                    Op: Core.Eq
+                    Params: rootNode, 0
+                    Returns: rootMissing
+                Branch
+                    Type: Branch
+                    Role: Content
+                    Caption: Root child or legacy head
+                    Condition: rootMissing
+                    TrueBlock
+                        Type: Section
+                        Role: Content
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListLen
+                            Params: top
+                            Returns: tl
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Gt
+                            Params: tl, 0
+                            Returns: tlPos
+                        Branch
+                            Condition: tlPos
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: top, 0
+                                    Returns: first
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: first, "name"
+                                    Returns: fn0
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: fn0, "Module"
+                                    Returns: isMod
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: fn0, "Root"
+                                    Returns: isRoot
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: isMod, isRoot
+                                    Returns: descend
+                                Branch
+                                    Condition: descend
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: first, "children"
+                                            Returns: top
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListLen
+                                            Params: top
+                                            Returns: tl
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lit
+                                            Params: 0
+                                            Returns: skip
+                    FalseBlock
+                        Type: Section
+                        Role: Content
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Caption: Descend into the Root wrapper
+                            Op: Core.MapGet
+                            Params: rootNode, "children"
+                            Returns: top
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListLen
+                            Params: top
+                            Returns: tl
+            FalseBlock
+                Type: Section
+                Role: Content
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Caption: Descend into the Module child
+                    Op: Core.MapGet
+                    Params: modNode, "children"
+                    Returns: top
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: top
+                    Returns: tl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: funcs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: ti
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: ti, tl
+            Returns: tic
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: ""
+            Returns: entry
+        Loop
+            Condition: tic
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: top, ti
+                    Returns: nd
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: nd, "name"
+                    Returns: nn
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: nn, "Function"
+                    Returns: isFn
+                Branch
+                    Condition: isFn
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Ctrl.Call
+                            Params: LowerFunc, nd
+                            Returns: f
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListPush
+                            Params: funcs, f
+                            Returns: funcs
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: f, "name"
+                            Returns: fn
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: fn, "main"
+                            Returns: isMain
+                        Branch
+                            Condition: isMain
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: f, "name"
+                                    Returns: entry
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 0
+                                    Returns: skip
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: skip
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: ti, 1
+                    Returns: ti
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: ti, tl
+                    Returns: tic
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Eq
+            Params: entry, ""
+            Returns: eEmpty
+        Branch
+            Condition: eEmpty
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: funcs
+                    Returns: fl
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Gt
+                    Params: fl, 0
+                    Returns: flPos
+                Branch
+                    Condition: flPos
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: funcs, 0
+                            Returns: f0
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: f0, "name"
+                            Returns: entry
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: skip
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 0
+                    Returns: skip
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: types
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: ir
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: ir, "functions", funcs
+            Returns: ir
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: ir, "entry", entry
+            Returns: ir
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: ir, "types", types
+            Returns: ir
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ir

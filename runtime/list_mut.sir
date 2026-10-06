@@ -1,0 +1,212 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: SIR runtime - in-place list mutation
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_list_push_mut
+        Params: lst, val
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_list_append, lst, val
+            Returns: nb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: nb, 8
+            Returns: nb8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: nb8, 8
+            Returns: stnb
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: lst, 8
+            Returns: lp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: lp, stnb, 8
+            Returns: w
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: lst
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out
+
+    Function
+        Type: Function
+        Role: Content
+        Name: sir_list_set_mut
+        Params: lst, idx, val
+        Returns: out
+
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: lst, 8
+            Returns: lp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: lp, 8
+            Returns: lst_st
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: lst_st, 4
+            Returns: llen
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: idx, 8
+            Returns: ip8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: ip8, 8
+            Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WLtS
+            Params: i, 0
+            Returns: gneg
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WGeS
+            Params: i, llen
+            Returns: gover
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WOr
+            Params: gneg, gover
+            Returns: graw
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: sir_const_bool, graw
+            Returns: gbad
+        Branch
+            Condition: gbad
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: IR.Trap
+            FalseBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Id
+                    Params: i
+                    Returns: i
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: lst_st, 8
+            Returns: s8
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: s8, 4
+            Returns: chunks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WShrU
+            Params: i, 6
+            Returns: ch
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAnd
+            Params: i, 63
+            Returns: off
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: ch, 4
+            Returns: cho
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: chunks, cho
+            Returns: chcell
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Load
+            Params: chcell, 4
+            Returns: chptr
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: chptr, 4
+            Returns: c4
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WMul
+            Params: off, 4
+            Returns: ofo
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.WAdd
+            Params: c4, ofo
+            Returns: cell
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: IR.Store
+            Params: cell, val, 4
+            Returns: w
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: lst
+            Returns: out
+
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

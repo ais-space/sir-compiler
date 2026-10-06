@@ -1,0 +1,88 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: Parse (atomized module)
+
+    Include
+        Path: ../ParseLines/ParseLines.sir
+        Module: ParseLines
+
+    Include
+        Path: ../BuildNodes/BuildNodes.sir
+        Module: BuildNodes
+
+    Include
+        Path: ../ApplyNodeNames/ApplyNodeNames.sir
+        Module: ApplyNodeNames
+
+    Include
+        Path: ../ApplyProps/ApplyProps.sir
+        Module: ApplyProps
+
+    Include
+        Path: ../LinkChildren/LinkChildren.sir
+        Module: LinkChildren
+
+    Function
+        Type: Function
+        Role: Content
+        Name: Parse
+        Params: source
+        Returns: ast
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: ParseLines, source
+            Returns: pl
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: pl, 0
+            Returns: records
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: pl, 1
+            Returns: nodeCount
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: BuildNodes, nodeCount
+            Returns: nodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: ApplyNodeNames, nodes, records
+            Returns: nodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: ApplyProps, nodes, records
+            Returns: nodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: LinkChildren, nodes, records, nodeCount
+            Returns: nodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: nodes, 0
+            Returns: ast
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: ast

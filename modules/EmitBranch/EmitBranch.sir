@@ -1,0 +1,246 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: EmitBranch (atomized module)
+
+
+    Function
+        Type: Function
+        Role: Content
+        Name: EmitBranch
+        Params: node, blocks, openIdx, counter
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.NumToStr
+            Params: counter
+            Returns: cv
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: "b", cv
+            Returns: tId
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: counter, 1
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.NumToStr
+            Params: counter
+            Returns: cv2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: "b", cv2
+            Returns: fId
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: counter, 1
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.NumToStr
+            Params: counter
+            Returns: cv3
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.StrConcat
+            Params: "b", cv3
+            Returns: joinId
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: counter, 1
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: blocks, openIdx
+            Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: term
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: term, "op", "Branch"
+            Returns: term
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: node, "props"
+            Returns: bprops
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: bprops, "Condition"
+            Returns: condName
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: condOp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: condOp, "kind", "ref"
+            Returns: condOp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: condOp, "val", condName
+            Returns: condOp
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: term, "cond", condOp
+            Returns: term
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: term, "true", tId
+            Returns: term
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: term, "false", fId
+            Returns: term
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: open, "term", term
+            Returns: open
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListSet
+            Params: blocks, openIdx, open
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: childTail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: childTail, "kind", "jump"
+            Returns: childTail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: childTail, "target", joinId
+            Returns: childTail
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitChild, blocks, tId, node, "TrueBlock", childTail, counter
+            Returns: res1
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: res1, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: res1, "counter"
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: EmitChild, blocks, fId, node, "FalseBlock", childTail, counter
+            Returns: res2
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: res2, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: res2, "counter"
+            Returns: counter
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Ctrl.Call
+            Params: NewOpen, blocks, joinId
+            Returns: no3
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: no3, "blocks"
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: no3, "openIdx"
+            Returns: openIdx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: 
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: res, "blocks", blocks
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: res, "openIdx", openIdx
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: res, "counter", counter
+            Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

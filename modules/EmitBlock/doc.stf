@@ -1,0 +1,9 @@
+EmitBlockModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Emits a single IR block: skips already-emitted/empty ones; for Return — emits instructions and the terminator (return operand + 0x0F return); for Branch — handles Loop headers (IsLoopHeader) and branch joins (CommonJoin).
+    Provides: EmitBlock(state, bid) -> state. bid — block id; returns state with appended bytes and updated state["emitted"]/state["labels"].
+    DependsOn: InList, EmitInstrs, EmitOperand, Push, PushList, EmitCond, IsLoopHeader, CommonJoin, NextInOrder, FindDepth (stateful), EmitBlock recursion.
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitBlock/EmitBlock.sir).
+    Notes: manages the label stack (state["labels"]) for nested blocks/loops; for a Loop header generates 0x02(block)/0x40(loop)…0x0B(end) and recursively emits the body and exit; for a plain Branch — branches via CommonJoin. Key driver of EmitFuncBody.

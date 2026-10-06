@@ -1,0 +1,160 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: FindDepth (atomized module, extracted from GenWasm.sir, Stage 7-8)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: FindDepth
+        Params: labels, target
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: -1
+            Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: nn
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.IsList
+            Params: labels
+            Returns: isListRaw
+        Branch
+            Condition: isListRaw
+            TrueBlock
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: labels
+                    Returns: L
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Sub
+                    Params: L, 1
+                    Returns: i
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Ge
+                    Params: i, 0
+                    Returns: cont
+                Loop
+                    Condition: cont
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: labels, i
+                            Returns: cur
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: cur, null
+                            Returns: isnull
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Not
+                            Params: isnull
+                            Returns: notnull
+                        Branch
+                            Condition: notnull
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: nn, 1
+                                    Returns: nn
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Id
+                                    Params: nn
+                                    Returns: nn
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: cur, target
+                            Returns: eq
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Eq
+                            Params: res, -1
+                            Returns: fresh
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: eq, fresh
+                            Returns: takeit
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.And
+                            Params: takeit, notnull
+                            Returns: takeit2
+                        Branch
+                            Condition: takeit2
+                            TrueBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Sub
+                                    Params: nn, 1
+                                    Returns: depth
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: depth
+                                    Returns: res
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: -1
+                                    Returns: i
+                            FalseBlock
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Id
+                                    Params: i
+                                    Returns: i
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Sub
+                            Params: i, 1
+                            Returns: i
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Ge
+                            Params: i, 0
+                            Returns: cont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

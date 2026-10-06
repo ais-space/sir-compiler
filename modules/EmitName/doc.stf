@@ -1,0 +1,9 @@
+EmitNameModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Encodes a name in WASM format (length-prefixed): U32LEB(length) + name bytes. Used for the name section and imports/exports.
+    Provides: EmitName(lst) -> out. lst — name byte list; returns [U32LEB(len)] + lst.
+    DependsOn: EmitU32LEB (length prefix).
+    Composition: Native Include from modules/GenWasm/GenWasm.sir (Path: ../EmitName/EmitName.sir).
+    Notes: the name here is already bytes (UTF-8); the function only adds the length prefix.

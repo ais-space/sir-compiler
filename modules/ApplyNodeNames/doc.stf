@@ -1,0 +1,8 @@
+ApplyNodeNamesModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Assigns names to nodes from node-records.
+    Provides: ApplyNodeNames(nodes, records) -> nodes.
+    DependsOn: none
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../ApplyNodeNames/ApplyNodeNames.sir).

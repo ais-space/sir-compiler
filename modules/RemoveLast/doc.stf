@@ -1,0 +1,8 @@
+RemoveLastModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Returns a copy of the list without the last element (parser stack utility, does not mutate the source).
+    Provides: RemoveLast(lst) -> r.
+    DependsOn: none (leaf with no dependencies on other modules)
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../RemoveLast/RemoveLast.sir).

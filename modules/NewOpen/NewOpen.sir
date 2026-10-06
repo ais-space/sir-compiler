@@ -1,0 +1,88 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: NewOpen (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: NewOpen
+        Params: blocks, id
+        Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: blk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: blk, "id", id
+            Returns: blk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: instrs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: blk, "instrs", instrs
+            Returns: blk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: term
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: blk, "term", term
+            Returns: blk
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListPush
+            Params: blocks, blk
+            Returns: blocks
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: blocks
+            Returns: openIdx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sub
+            Params: openIdx, 1
+            Returns: openIdx
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: out, "blocks", blocks
+            Returns: out
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSet
+            Params: out, "openIdx", openIdx
+            Returns: out
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: out

@@ -1,0 +1,8 @@
+ValidateOperandModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Validates a single operand: kind must be admissible (ValidOperandKind: ref/const/global/null). Returns 1 on success, 0 otherwise.
+    Provides: ValidateOperand(operand) -> ok.
+    DependsOn: ValidOperandKind.
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../ValidateOperand/ValidateOperand.sir).

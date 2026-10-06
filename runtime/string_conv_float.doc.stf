@@ -1,0 +1,7 @@
+string_conv_floatModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Float to/from string conversion.
+    Provides: sir_num_to_str_float(v) -> out f64 to decimal string.
+    Provides: sir_parse_float(s) -> out Decimal string to f64.

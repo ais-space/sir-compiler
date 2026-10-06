@@ -1,0 +1,992 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: CollectStr - unique string constants (from ANY const operand, matching
+    Collects string literals -> offsets for data section
+
+    Function
+        Type: Function
+        Role: Content
+        Name: CollectStr
+        Params: ir, base
+        Returns: res
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: ir, "functions"
+            Returns: funcs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: strs
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Returns: smap
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Id
+            Params: base
+            Returns: off
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: funcs
+            Returns: nf
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: fi
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: fi, nf
+            Returns: contf
+        Loop
+            Condition: contf
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: funcs, fi
+                    Returns: func
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: func, "blocks"
+                    Returns: blocks
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListLen
+                    Params: blocks
+                    Returns: nb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lit
+                    Params: 0
+                    Returns: bi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: bi, nb
+                    Returns: contb
+                Loop
+                    Condition: contb
+                    Body
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: blocks, bi
+                            Returns: blk
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: blk, "instrs"
+                            Returns: instrs
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListLen
+                            Params: instrs
+                            Returns: ni
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: ii
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: ii, ni
+                            Returns: conti
+                        Loop
+                            Condition: conti
+                            Body
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListGet
+                                    Params: instrs, ii
+                                    Returns: ins
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: ins, "args"
+                                    Returns: iargs
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iargs, null
+                                    Returns: iargsNull
+                                Branch
+                                    Condition: iargsNull
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.List
+                                            Returns: iargs
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: ins, "operands"
+                                    Returns: iops
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iops, null
+                                    Returns: iopsNull
+                                Branch
+                                    Condition: iopsNull
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Id
+                                            Params: iargs
+                                            Returns: scanA
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListConcat
+                                            Params: iargs, iops
+                                            Returns: scanA
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: ins, "op"
+                                    Returns: iop
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iop, "IR.Const"
+                                    Returns: iopC
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iop, "IR.ReadFile"
+                                    Returns: iopR
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: iopC, iopR
+                                    Returns: iopE
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iop, "IR.Trace"
+                                    Returns: isTr
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: iop, "IR.TraceVal"
+                                    Returns: isTrV
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Or
+                                    Params: isTr, isTrV
+                                    Returns: isTrAny
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Not
+                                    Params: isTrAny
+                                    Returns: doScan
+                                Branch
+                                    Condition: iopE
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListLen
+                                            Params: iargs
+                                            Returns: ian
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lt
+                                            Params: 0, ian
+                                            Returns: ihas
+                                        Branch
+                                            Condition: ihas
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: iargs, 0
+                                                    Returns: a0i
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: a0i, "val"
+                                                    Returns: v0
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: a0i, "kind"
+                                                    Returns: v0k
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.TypeOf
+                                                    Params: v0
+                                                    Returns: v0t
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Eq
+                                                    Params: v0t, "float"
+                                                    Returns: v0f
+                                                Branch
+                                                    Condition: v0f
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.NumToStr
+                                                            Params: v0
+                                                            Returns: v0
+                                                    FalseBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Id
+                                                            Params: v0
+                                                            Returns: v0
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.TypeOf
+                                                    Params: v0
+                                                    Returns: v0t
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Eq
+                                                    Params: v0t, "str"
+                                                    Returns: v0s
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Eq
+                                                    Params: v0k, "const"
+                                                    Returns: v0c
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.And
+                                                    Params: v0s, v0c
+                                                    Returns: v0take
+                                                Branch
+                                                    Condition: v0take
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.MapGet
+                                                            Params: smap, v0
+                                                            Returns: v0had
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Eq
+                                                            Params: v0had, null
+                                                            Returns: v0new
+                                                        Branch
+                                                            Condition: v0new
+                                                            TrueBlock
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.ListPush
+                                                                    Params: strs, v0
+                                                                    Returns: strs
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Ctrl.Call
+                                                                    Params: StrBytes, v0
+                                                                    Returns: v0byts
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.ListLen
+                                                                    Params: v0byts
+                                                                    Returns: v0bl
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Add
+                                                                    Params: v0bl, 3
+                                                                    Returns: v0bl3
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.IntDiv
+                                                                    Params: v0bl3, 4
+                                                                    Returns: v0q
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Mul
+                                                                    Params: v0q, 4
+                                                                    Returns: v0al
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.List
+                                                                    Params: off, v0bl
+                                                                    Returns: v0ent
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.MapSet
+                                                                    Params: smap, v0, v0ent
+                                                                    Returns: smap
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Add
+                                                                    Params: off, v0al
+                                                                    Returns: off
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListLen
+                                    Params: scanA
+                                    Returns: nA
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 0
+                                    Returns: ai
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: ai, nA
+                                    Returns: acont0
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.And
+                                    Params: acont0, doScan
+                                    Returns: acont
+                                Loop
+                                    Condition: acont
+                                    Body
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListGet
+                                            Params: scanA, ai
+                                            Returns: a
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: a, "kind"
+                                            Returns: ak
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Eq
+                                            Params: ak, "const"
+                                            Returns: isC
+                                        Branch
+                                            Condition: isC
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: a, "val"
+                                                    Returns: av
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.TypeOf
+                                                    Params: av
+                                                    Returns: avt
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Eq
+                                                    Params: avt, "float"
+                                                    Returns: avf
+                                                Branch
+                                                    Condition: avf
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.NumToStr
+                                                            Params: av
+                                                            Returns: av
+                                                    FalseBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Id
+                                                            Params: av
+                                                            Returns: av
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.TypeOf
+                                                    Params: av
+                                                    Returns: avt
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Eq
+                                                    Params: avt, "str"
+                                                    Returns: isS
+                                                Branch
+                                                    Condition: isS
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.MapGet
+                                                            Params: smap, av
+                                                            Returns: had
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Eq
+                                                            Params: had, null
+                                                            Returns: isNew
+                                                        Branch
+                                                            Condition: isNew
+                                                            TrueBlock
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.ListPush
+                                                                    Params: strs, av
+                                                                    Returns: strs
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Ctrl.Call
+                                                                    Params: StrBytes, av
+                                                                    Returns: byts
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.ListLen
+                                                                    Params: byts
+                                                                    Returns: bl
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Add
+                                                                    Params: bl, 3
+                                                                    Returns: bl3
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.IntDiv
+                                                                    Params: bl3, 4
+                                                                    Returns: q
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Mul
+                                                                    Params: q, 4
+                                                                    Returns: aligned
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.List
+                                                                    Params: off, bl
+                                                                    Returns: entry
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.MapSet
+                                                                    Params: smap, av, entry
+                                                                    Returns: smap
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Add
+                                                                    Params: off, aligned
+                                                                    Returns: off
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Add
+                                            Params: ai, 1
+                                            Returns: ai
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lt
+                                            Params: ai, nA
+                                            Returns: acont
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: blk, "term"
+                                    Returns: term
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: term, "args"
+                                    Returns: targs
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: targs, null
+                                    Returns: targsNull
+                                Branch
+                                    Condition: targsNull
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.List
+                                            Returns: targs
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: term, "operands"
+                                    Returns: tops
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: tops, null
+                                    Returns: topsNull
+                                Branch
+                                    Condition: topsNull
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Id
+                                            Params: targs
+                                            Returns: scanT
+                                    FalseBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListConcat
+                                            Params: targs, tops
+                                            Returns: scanT
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.MapGet
+                                    Params: term, "op"
+                                    Returns: top
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Eq
+                                    Params: top, "IR.Const"
+                                    Returns: topC
+                                Branch
+                                    Condition: topC
+                                    TrueBlock
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListLen
+                                            Params: targs
+                                            Returns: tan
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lt
+                                            Params: 0, tan
+                                            Returns: thas
+                                        Branch
+                                            Condition: thas
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.ListGet
+                                                    Params: targs, 0
+                                                    Returns: t0i
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: t0i, "val"
+                                                    Returns: tv0
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.TypeOf
+                                                    Params: tv0
+                                                    Returns: tv0t
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Eq
+                                                    Params: tv0t, "float"
+                                                    Returns: tv0f
+                                                Branch
+                                                    Condition: tv0f
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.NumToStr
+                                                            Params: tv0
+                                                            Returns: tv0
+                                                    FalseBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Id
+                                                            Params: tv0
+                                                            Returns: tv0
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.TypeOf
+                                                    Params: tv0
+                                                    Returns: tv0t
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Eq
+                                                    Params: tv0t, "str"
+                                                    Returns: tv0s
+                                                Branch
+                                                    Condition: tv0s
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.MapGet
+                                                            Params: smap, tv0
+                                                            Returns: tv0had
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Eq
+                                                            Params: tv0had, null
+                                                            Returns: tv0new
+                                                        Branch
+                                                            Condition: tv0new
+                                                            TrueBlock
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.ListPush
+                                                                    Params: strs, tv0
+                                                                    Returns: strs
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Ctrl.Call
+                                                                    Params: StrBytes, tv0
+                                                                    Returns: tv0byts
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.ListLen
+                                                                    Params: tv0byts
+                                                                    Returns: tv0bl
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Add
+                                                                    Params: tv0bl, 3
+                                                                    Returns: tv0bl3
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.IntDiv
+                                                                    Params: tv0bl3, 4
+                                                                    Returns: tv0q
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Mul
+                                                                    Params: tv0q, 4
+                                                                    Returns: tv0al
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.List
+                                                                    Params: off, tv0bl
+                                                                    Returns: tv0ent
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.MapSet
+                                                                    Params: smap, tv0, tv0ent
+                                                                    Returns: smap
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Add
+                                                                    Params: off, tv0al
+                                                                    Returns: off
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.ListLen
+                                    Params: scanT
+                                    Returns: nT
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lit
+                                    Params: 0
+                                    Returns: ti
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: ti, nT
+                                    Returns: tcont
+                                Loop
+                                    Condition: tcont
+                                    Body
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.ListGet
+                                            Params: scanT, ti
+                                            Returns: t
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.MapGet
+                                            Params: t, "kind"
+                                            Returns: tk
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Eq
+                                            Params: tk, "const"
+                                            Returns: tisC
+                                        Branch
+                                            Condition: tisC
+                                            TrueBlock
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.MapGet
+                                                    Params: t, "val"
+                                                    Returns: tv
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.TypeOf
+                                                    Params: tv
+                                                    Returns: tvt
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Eq
+                                                    Params: tvt, "float"
+                                                    Returns: tvf
+                                                Branch
+                                                    Condition: tvf
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.NumToStr
+                                                            Params: tv
+                                                            Returns: tv
+                                                    FalseBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Id
+                                                            Params: tv
+                                                            Returns: tv
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.TypeOf
+                                                    Params: tv
+                                                    Returns: tvt
+                                                Instruction
+                                                    Type: Instruction
+                                                    Role: Content
+                                                    Op: Core.Eq
+                                                    Params: tvt, "str"
+                                                    Returns: tisS
+                                                Branch
+                                                    Condition: tisS
+                                                    TrueBlock
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.MapGet
+                                                            Params: smap, tv
+                                                            Returns: thad
+                                                        Instruction
+                                                            Type: Instruction
+                                                            Role: Content
+                                                            Op: Core.Eq
+                                                            Params: thad, null
+                                                            Returns: tisNew
+                                                        Branch
+                                                            Condition: tisNew
+                                                            TrueBlock
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.ListPush
+                                                                    Params: strs, tv
+                                                                    Returns: strs
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Ctrl.Call
+                                                                    Params: StrBytes, tv
+                                                                    Returns: tbyts
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.ListLen
+                                                                    Params: tbyts
+                                                                    Returns: tbl
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Add
+                                                                    Params: tbl, 3
+                                                                    Returns: tbl3
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.IntDiv
+                                                                    Params: tbl3, 4
+                                                                    Returns: tq
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Mul
+                                                                    Params: tq, 4
+                                                                    Returns: taligned
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.List
+                                                                    Params: off, tbl
+                                                                    Returns: tentry
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.MapSet
+                                                                    Params: smap, tv, tentry
+                                                                    Returns: smap
+                                                                Instruction
+                                                                    Type: Instruction
+                                                                    Role: Content
+                                                                    Op: Core.Add
+                                                                    Params: off, taligned
+                                                                    Returns: off
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Add
+                                            Params: ti, 1
+                                            Returns: ti
+                                        Instruction
+                                            Type: Instruction
+                                            Role: Content
+                                            Op: Core.Lt
+                                            Params: ti, nT
+                                            Returns: tcont
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Add
+                                    Params: ii, 1
+                                    Returns: ii
+                                Instruction
+                                    Type: Instruction
+                                    Role: Content
+                                    Op: Core.Lt
+                                    Params: ii, ni
+                                    Returns: conti
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Add
+                            Params: bi, 1
+                            Returns: bi
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lt
+                            Params: bi, nb
+                            Returns: contb
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: fi, 1
+                    Returns: fi
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: fi, nf
+                    Returns: contf
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Map
+            Params: "order", strs, "map", smap
+            Returns: res
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: res

@@ -1,0 +1,44 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: TopDepth (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: TopDepth
+        Params: stack
+        Returns: d
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: stack
+            Returns: L
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Sub
+            Params: L, 1
+            Returns: last
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: stack, last
+            Returns: frame
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapGet
+            Params: frame, "depth"
+            Returns: d
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: d

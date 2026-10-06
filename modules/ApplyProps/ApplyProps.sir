@@ -1,0 +1,129 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: ApplyProps (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: ApplyProps
+        Params: nodes, records
+        Returns: nodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListLen
+            Params: records
+            Returns: recCount
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: r
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: r, recCount
+            Returns: rCont
+        Loop
+            Condition: rCont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListGet
+                    Params: records, r
+                    Returns: rec
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapGet
+                    Params: rec, "kind"
+                    Returns: kind
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Eq
+                    Params: kind, "prop"
+                    Returns: isProp
+                Branch
+                    Condition: isProp
+                    TrueBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: rec, "parent"
+                            Returns: pIdx
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: rec, "key"
+                            Returns: ky
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: rec, "val"
+                            Returns: vl
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListGet
+                            Params: nodes, pIdx
+                            Returns: nd
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapGet
+                            Params: nd, "props"
+                            Returns: pr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSetMut
+                            Params: pr, ky, vl
+                            Returns: pr
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.MapSetMut
+                            Params: nd, "props", pr
+                            Returns: nd
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.ListSetMut
+                            Params: nodes, pIdx, nd
+                            Returns: nodes
+                    FalseBlock
+                        Instruction
+                            Type: Instruction
+                            Role: Content
+                            Op: Core.Lit
+                            Params: 0
+                            Returns: skip
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: r, 1
+                    Returns: r
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: r, recCount
+                    Returns: rCont
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: nodes

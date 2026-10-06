@@ -1,0 +1,115 @@
+Context
+    DocumentVersion: 0.11.1-draft
+    GrammarVersion: 1.0.1
+
+Module
+    Type: Module
+    Role: Content
+    Caption: BuildNodes (atomized module)
+
+    Function
+        Type: Function
+        Role: Content
+        Name: BuildNodes
+        Params: nodeCount
+        Returns: nodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Add
+            Params: nodeCount, 1
+            Returns: size
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.List
+            Returns: nodes
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lit
+            Params: 0
+            Returns: j
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.Lt
+            Params: j, size
+            Returns: jCont
+        Loop
+            Condition: jCont
+            Body
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Returns: m
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSetMut
+                    Params: m, "name", ""
+                    Returns: m
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Map
+                    Returns: p
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSetMut
+                    Params: m, "props", p
+                    Returns: m
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.List
+                    Returns: ch
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.MapSetMut
+                    Params: m, "children", ch
+                    Returns: m
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.ListPushMut
+                    Params: nodes, m
+                    Returns: nodes
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Add
+                    Params: j, 1
+                    Returns: j
+                Instruction
+                    Type: Instruction
+                    Role: Content
+                    Op: Core.Lt
+                    Params: j, size
+                    Returns: jCont
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListGet
+            Params: nodes, 0
+            Returns: rootNode
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.MapSetMut
+            Params: rootNode, "name", "__document__"
+            Returns: rootNode
+        Instruction
+            Type: Instruction
+            Role: Content
+            Op: Core.ListSetMut
+            Params: nodes, 0, rootNode
+            Returns: nodes
+        Result
+            Type: Result
+            Role: Content
+            State: Ok
+            Returns: nodes

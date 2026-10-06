@@ -1,0 +1,10 @@
+PathOpenInstrModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: WASI path_open emission for IR.PathOpen: 9 raw operands via EmitOperandRaw; positions 5–6 (fs_rights_base/fs_rights_inheriting rights) stay i64, the rest are wrapped as i32; import #2 call, result extension. Invoked via hook from EmitMemInstr for each instruction; filters by operation name itself.
+    Provides
+        Item: PathOpenInstr(state, ins) -> state
+    DependsOn: EmitOperandRaw, Push, PushList, EmitU32LEB.
+    Composition: Native include from modules/GenWasm/GenWasm.sir.
+    Notes: Canonical path_open import type is typeidx 1 of the minimal rt.

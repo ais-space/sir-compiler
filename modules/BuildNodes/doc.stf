@@ -1,0 +1,8 @@
+BuildNodesModuleDoc
+    Version: 1
+    Language: en
+    Format: STF
+    Purpose: Builds the node skeleton (empty frames) for the number of node-records.
+    Provides: BuildNodes(nodeCount) -> nodes.
+    DependsOn: none
+    Composition: Native Include from modules/Compiler/Compiler.sir (Path: ../BuildNodes/BuildNodes.sir).
